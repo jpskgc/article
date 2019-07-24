@@ -49,31 +49,29 @@ class Post extends React.Component<{}, ArticleState> {
       content: this.state.content,
     };
 
-    const res = await axios.post('http://localhost:2345/api/post', data);
+    const client = axios.create({
+      baseURL: process.env.REACT_APP_API_URL,
+    });
+
+    const res = await client.post('/api/post', data);
 
     const formData = new FormData();
     for (var i in this.state.files) {
       formData.append('images[]', this.state.files[i]);
     }
 
-    const resImageNames = await axios.post(
-      'http://localhost:2345/api/post/image',
-      formData,
-      {
-        headers: {'Content-Type': 'multipart/form-data'},
-      }
-    );
+    const resImageNames = await client.post('/api/post/image', formData, {
+      headers: {'Content-Type': 'multipart/form-data'},
+    });
 
     const imageData = {
       articleUUID: res.data.uuid,
       imageNames: resImageNames.data,
     };
 
-    axios
-      .post('http://localhost:2345/api/post/image/db', imageData)
-      .then(res => {
-        console.log(res);
-      });
+    client.post('/api/post/image/db', imageData).then(res => {
+      console.log(res);
+    });
   }
 
   renderRedirect = () => {
