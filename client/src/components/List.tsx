@@ -38,7 +38,7 @@ class List extends React.Component<{}, ArticleState> {
       <Container style={{marginTop: '7em'}} text>
         <Grid columns={1} divided="vertically">
           <Grid.Row>
-            {this.state.articles.map(function(articleData, i) {
+            {(this.state.articles || []).map(function(articleData, i) {
               return (
                 <Grid.Column>
                   <Segment>

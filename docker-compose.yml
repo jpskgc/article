@@ -9,8 +9,6 @@ services:
       MYSQL_DATABASE: article
       MYSQL_USER: docker
       MYSQL_PASSWORD: docker
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d
   nginx:
     restart: always
     build:
@@ -29,6 +27,8 @@ services:
     depends_on:
       - db
     tty: true
+    volumes:
+      - $HOME/.aws/credentials.properties:/home/api/.aws/credentials.properties
   client:
     build:
       dockerfile: Dockerfile.dev
