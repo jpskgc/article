@@ -27,8 +27,9 @@ services:
     depends_on:
       - db
     tty: true
-    volumes:
-      - $HOME/.aws/credentials.properties:/home/api/.aws/credentials.properties
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
   client:
     build:
       dockerfile: Dockerfile.dev

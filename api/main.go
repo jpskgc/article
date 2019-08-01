@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -16,7 +17,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awsutil"
 	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 
@@ -31,7 +31,7 @@ type Article struct {
 	IMAGENAMES []ImageName `json:"imageNames"`
 }
 
-var articles []Article
+//var articles []Article
 
 type ImageName struct {
 	NAME string `json:"name"`
@@ -105,6 +105,7 @@ func main() {
 	api := router.Group("/api")
 	{
 		api.GET("/articles", func(c *gin.Context) {
+			var articles []Article
 			results, err := db.Query("SELECT * FROM articles")
 			if err != nil {
 				panic(err.Error())
@@ -158,19 +159,20 @@ func main() {
 
 		})
 		api.POST("/post/image", func(c *gin.Context) {
-			var creds *credentials.Credentials
-			var err error
-			//creds := credentials.NewStaticCredentials(awsAccessKeyID, awsSecretAccessKey, token)
+			// var creds *credentials.Credentials
+			// var err error
+			//creds := credentials.NewStaticCredentials(os.Getenv("awsAccessKeyID"), os.Getenv("awsSecretAccessKey"), "")
+			creds := credentials.NewStaticCredentials(os.Getenv("AWS_ACCESS_KEY_ID"), os.Getenv("AWS_SECRET_ACCESS_KEY"), "")
 
-			//local
-			creds = credentials.NewSharedCredentials("", "default")
-			//creds.Expire()
-			_, err = creds.Get()
-			//TODO production credentials
-			if err != nil {
-				creds = credentials.NewCredentials(&ec2rolecreds.EC2RoleProvider{})
-				_, err = creds.Get()
-			}
+			// //local
+			// creds = credentials.NewSharedCredentials("", "default")
+			// //creds.Expire()
+			// _, err = creds.Get()
+			// //TODO production credentials
+			// if err != nil {
+			// 	creds = credentials.NewCredentials(&ec2rolecreds.EC2RoleProvider{})
+			// 	_, err = creds.Get()
+			// }
 
 			cfg := aws.NewConfig().WithRegion("ap-northeast-1").WithCredentials(creds)
 			svc := s3.New(session.New(), cfg)

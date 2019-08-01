@@ -30,6 +30,7 @@ class List extends React.Component<{}, ArticleState> {
   }
 
   componentDidMount() {
+    this.setState({articles: []});
     this.serverRequest();
   }
 
