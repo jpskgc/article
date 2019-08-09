@@ -16,14 +16,17 @@ services:
       context: ./nginx
     ports:
       - '3050:80'
+    depends_on:
+      - client
+      - api
   api:
     build:
       dockerfile: Dockerfile.dev
       context: ./api
     volumes:
       - ./api:/app
-    ports:
-      - 2345:2345
+    # ports:
+    #   - 2345:2345
     depends_on:
       - db
     tty: true
@@ -40,5 +43,5 @@ services:
     volumes:
       - /app/node_modules
       - ./client:/app
-    ports:
-      - 3000:3000
+    # ports:
+    #   - 3000:3000

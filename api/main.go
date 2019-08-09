@@ -31,8 +31,6 @@ type Article struct {
 	IMAGENAMES []ImageName `json:"imageNames"`
 }
 
-//var articles []Article
-
 type ImageName struct {
 	NAME string `json:"name"`
 }
