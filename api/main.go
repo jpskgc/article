@@ -55,8 +55,8 @@ func main() {
 	if err != nil {
 		//TODO production
 	}
-	//db, err := sql.Open("mysql", os.Getenv("MYSQL_USER")+":"+os.Getenv("MYSQL_PASSWORD")+"@tcp(localhost:3306)/article")
-	db, err := sql.Open("mysql", "docker:docker@tcp(db:3306)/article")
+	db, err := sql.Open("mysql", os.Getenv("MYSQL_USER")+":"+os.Getenv("MYSQL_PASSWORD")+"@tcp("+os.Getenv("MYSQL_HOST")+":3306)/article")
+	//db, err := sql.Open("mysql", "docker:docker@tcp(db:3306)/article")
 	if err != nil {
 		panic(err.Error())
 	}
