@@ -2,13 +2,13 @@ import * as firebase from 'firebase';
 import 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  apiKey: 'AIzaSyAaUYZ1icS_t_7OjH9f-VpDH-WGEIon_hs',
+  authDomain: 'jpskgc-article.firebaseapp.com',
+  databaseURL: 'https://jpskgc-article.firebaseio.com',
+  projectId: 'jpskgc-article',
   storageBucket: '',
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  messagingSenderId: '435581300302',
+  appId: '1:435581300302:web:698faafeed154e99',
 };
 
 firebase.initializeApp(firebaseConfig);
