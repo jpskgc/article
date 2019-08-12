@@ -13,7 +13,7 @@
       "image": "jpskgc/multi-api",
       "hostname": "api",
       "essential": false,
-      "memory": 128
+      "memory": 1024
     },
     {
       "name": "nginx",
