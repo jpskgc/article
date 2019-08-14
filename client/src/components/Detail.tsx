@@ -1,6 +1,6 @@
 import React from 'react';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {Container, Header} from 'semantic-ui-react';
+import {Container, Header, Button, Icon} from 'semantic-ui-react';
 import axios from 'axios';
 import {Article} from '../articleData';
 
@@ -41,7 +41,6 @@ class Detail extends React.Component<
   Paragraph = () => <p>{[this.state.article.content].join('')}</p>;
 
   render() {
-    //TODO redirect
     return (
       <Container text style={{marginTop: '3em'}}>
         <Header as="h1">{this.state.article.title}</Header>
@@ -56,6 +55,10 @@ class Detail extends React.Component<
             />
           );
         })}
+        <Button color="green" as="a" href="/">
+          <Icon name="arrow left" />
+          Back to Home
+        </Button>
       </Container>
     );
   }

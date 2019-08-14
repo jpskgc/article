@@ -18,7 +18,7 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/detail/:id" component={Detail} />
           <Route path="/post/finish" component={Finish} />
-          <Route path="/post" component={Post} />
+          <PrivateRouter path="/post" component={Post} />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
           <PrivateRouter path="/setting" component={Setting} />
