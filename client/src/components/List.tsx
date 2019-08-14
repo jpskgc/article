@@ -1,11 +1,22 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {Grid, Segment, Container, Header} from 'semantic-ui-react';
+import {
+  Grid,
+  Segment,
+  Container,
+  Header,
+  Pagination,
+  PaginationProps,
+} from 'semantic-ui-react';
 import axios from 'axios';
 import {Article} from '../articleData';
 
 interface ArticleState {
   articles: Article[];
+  articleDatas: Article[];
+  begin: number;
+  end: number;
+  activePage: number;
 }
 
 class List extends React.Component<{}, ArticleState> {
@@ -13,34 +24,46 @@ class List extends React.Component<{}, ArticleState> {
     super(props);
     this.state = {
       articles: [],
+      articleDatas: [],
+      begin: 0,
+      end: 5,
+      activePage: 1,
     };
     this.serverRequest = this.serverRequest.bind(this);
+    this.btnClick = this.btnClick.bind(this);
   }
 
-  serverRequest() {
-    // const client = axios.create({
-    //   baseURL: process.env.REACT_APP_API_URL,
-    // });
-    // client
-    axios
-      .get('/api/articles')
-      .then(response => {
-        this.setState({articles: response.data});
-      })
-      .catch(response => console.log('ERROR!! occurred in Backend.'));
+  async serverRequest() {
+    const res = await axios.get('/api/articles');
+    this.setState({articles: res.data});
   }
 
-  componentDidMount() {
+  async btnClick(
+    event: React.MouseEvent<HTMLAnchorElement>,
+    data: PaginationProps
+  ) {
+    await this.setState({activePage: data.activePage as number});
+    await this.setState({begin: this.state.activePage * 5 - 5});
+    await this.setState({end: this.state.activePage * 5});
+    this.setState({
+      articleDatas: this.state.articles.slice(this.state.begin, this.state.end),
+    });
+  }
+
+  async componentDidMount() {
     this.setState({articles: []});
-    this.serverRequest();
+    await this.serverRequest();
+    this.setState({
+      articleDatas: this.state.articles.slice(this.state.begin, this.state.end),
+    });
   }
 
   render() {
     return (
-      <Container style={{marginTop: '7em'}} text>
+      <Container style={{marginTop: '3em'}} text>
         <Grid columns={1} divided="vertically">
           <Grid.Row>
-            {(this.state.articles || []).map(function(articleData, i) {
+            {(this.state.articleDatas || []).map(function(articleData, i) {
               return (
                 <Grid.Column>
                   <Segment>
@@ -55,6 +78,11 @@ class List extends React.Component<{}, ArticleState> {
             })}
           </Grid.Row>
         </Grid>
+        <Pagination
+          defaultActivePage={1}
+          totalPages={Math.ceil(this.state.articles.length / 5)}
+          onPageChange={this.btnClick}
+        />
       </Container>
     );
   }

@@ -49,10 +49,6 @@ class Post extends React.Component<{}, ArticleState> {
       content: this.state.content,
     };
 
-    // const client = axios.create({
-    //   baseURL: process.env.REACT_APP_API_URL,
-    // });
-
     const res = await axios.post('/api/post', data);
 
     const formData = new FormData();

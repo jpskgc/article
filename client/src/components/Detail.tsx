@@ -26,10 +26,6 @@ class Detail extends React.Component<
   }
 
   serverRequest() {
-    // const client = axios.create({
-    //   baseURL: process.env.REACT_APP_API_URL,
-    // });
-    // client
     axios
       .get('/api/article/' + this.props.match.params.id)
       .then(response => {
