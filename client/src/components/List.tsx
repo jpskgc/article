@@ -7,7 +7,6 @@ import {
   Header,
   Pagination,
   PaginationProps,
-  Icon,
 } from 'semantic-ui-react';
 import axios from 'axios';
 import {Article} from '../articleData';

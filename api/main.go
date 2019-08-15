@@ -48,13 +48,10 @@ type Param struct {
 }
 
 func main() {
-	//TODO production
 	err := godotenv.Load()
 	if err != nil {
-		//TODO production
 	}
 	db, err := sql.Open("mysql", os.Getenv("MYSQL_USER")+":"+os.Getenv("MYSQL_PASSWORD")+"@tcp("+os.Getenv("MYSQL_HOST")+":3306)/article")
-	//db, err := sql.Open("mysql", "docker:docker@tcp(db:3306)/article")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -138,6 +135,14 @@ func main() {
 			}
 			c.JSON(http.StatusOK, article)
 		})
+		api.GET("/delete/:id", func(c *gin.Context) {
+			id := c.Params.ByName("id")
+			_, err = db.Exec("DELETE FROM articles WHERE id= ?", id)
+			if err != nil {
+				log.Fatalf("db.Exec(): %s\n", err)
+			}
+			c.JSON(http.StatusOK, gin.H{"status": "ok"})
+		})
 		api.POST("/post", func(c *gin.Context) {
 			u, err := uuid.NewRandom()
 			if err != nil {
@@ -157,20 +162,8 @@ func main() {
 
 		})
 		api.POST("/post/image", func(c *gin.Context) {
-			// var creds *credentials.Credentials
-			// var err error
-			//creds := credentials.NewStaticCredentials(os.Getenv("awsAccessKeyID"), os.Getenv("awsSecretAccessKey"), "")
-			creds := credentials.NewStaticCredentials(os.Getenv("AWS_ACCESS_KEY_ID"), os.Getenv("AWS_SECRET_ACCESS_KEY"), "")
 
-			// //local
-			// creds = credentials.NewSharedCredentials("", "default")
-			// //creds.Expire()
-			// _, err = creds.Get()
-			// //TODO production credentials
-			// if err != nil {
-			// 	creds = credentials.NewCredentials(&ec2rolecreds.EC2RoleProvider{})
-			// 	_, err = creds.Get()
-			// }
+			creds := credentials.NewStaticCredentials(os.Getenv("AWS_ACCESS_KEY_ID"), os.Getenv("AWS_SECRET_ACCESS_KEY"), "")
 
 			cfg := aws.NewConfig().WithRegion("ap-northeast-1").WithCredentials(creds)
 			svc := s3.New(session.New(), cfg)

@@ -3,9 +3,11 @@ import {RouteComponentProps, withRouter} from 'react-router';
 import {Container, Header, Button, Icon} from 'semantic-ui-react';
 import axios from 'axios';
 import {Article} from '../articleData';
+import {Redirect} from 'react-router';
 
 interface ArticleState {
   article: Article;
+  redirect: boolean;
 }
 
 class Detail extends React.Component<
@@ -21,8 +23,10 @@ class Detail extends React.Component<
         content: '',
         imageNames: [],
       },
+      redirect: false,
     };
     this.serverRequest = this.serverRequest.bind(this);
+    this.deleteArticle = this.deleteArticle.bind(this);
   }
 
   serverRequest() {
@@ -33,6 +37,22 @@ class Detail extends React.Component<
       })
       .catch(response => console.log('ERROR!! occurred in Backend.'));
   }
+
+  deleteArticle() {
+    this.setState({redirect: true});
+    axios
+      .get('/api/delete/' + this.props.match.params.id)
+      .then(response => {
+        this.setState({article: response.data});
+      })
+      .catch(response => console.log('ERROR!! occurred in Backend.'));
+  }
+
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      return <Redirect to="/article/delete/finish" />;
+    }
+  };
 
   componentDidMount() {
     this.serverRequest();
@@ -55,9 +75,15 @@ class Detail extends React.Component<
             />
           );
         })}
+        {/* TODO fix button location when image exists */}
         <Button color="green" as="a" href="/">
           <Icon name="arrow left" />
           Back to Home
+        </Button>
+        {this.renderRedirect()}
+        <Button floated="right" onClick={this.deleteArticle}>
+          <Icon name="trash" />
+          Delete this Article
         </Button>
       </Container>
     );

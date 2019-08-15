@@ -9,6 +9,7 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import PrivateRouter from './components/PrivateRouter';
 import Setting from './components/Setting';
+import FinishDelete from './components/FinishDelete';
 
 class App extends React.Component {
   render() {
@@ -18,6 +19,7 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/detail/:id" component={Detail} />
           <Route path="/post/finish" component={Finish} />
+          <Route path="/article/delete/finish" component={FinishDelete} />
           <PrivateRouter path="/post" component={Post} />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />

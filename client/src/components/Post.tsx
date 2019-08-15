@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form, Container} from 'semantic-ui-react';
+import {Form, Container, List} from 'semantic-ui-react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 import Dropzone from 'react-dropzone';
@@ -97,8 +97,7 @@ class Post extends React.Component<{}, ArticleState> {
             onChange={this.handleChangeContent}
           />
           {this.renderRedirect()}
-          {/* <Form.Button icon="upload" content="Upload Image" floated="right" />
-          <input type="file" id="file" hidden /> */}
+          {/* Fix desigin*/}
           <Dropzone accept="image/*" onDrop={this.handleOnDrop}>
             {({getRootProps, getInputProps, open}) => (
               <section>
@@ -109,6 +108,11 @@ class Post extends React.Component<{}, ArticleState> {
                     Open File Dialog
                   </button>
                 </div>
+                <List>
+                  {(this.state.files || []).map(function(file, i) {
+                    return <List.Item icon="image" content={file.name} />;
+                  })}
+                </List>
               </section>
             )}
           </Dropzone>
