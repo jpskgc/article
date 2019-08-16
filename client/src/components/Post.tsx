@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form, Container, List} from 'semantic-ui-react';
+import {Form, Container, List, ListItemProps, Confirm} from 'semantic-ui-react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 import Dropzone from 'react-dropzone';
@@ -9,6 +9,7 @@ interface ArticleState {
   content: string;
   redirect: boolean;
   files: File[];
+  confirm: boolean;
 }
 
 class Post extends React.Component<{}, ArticleState> {
@@ -19,12 +20,16 @@ class Post extends React.Component<{}, ArticleState> {
       content: '',
       redirect: false,
       files: [],
+      confirm: false,
     };
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.renderRedirect = this.renderRedirect.bind(this);
     this.handleOnDrop = this.handleOnDrop.bind(this);
+    this.handleRemove = this.handleRemove.bind(this);
+    this.handleConfirmOpen = this.handleConfirmOpen.bind(this);
+    this.handleConfirmClose = this.handleConfirmClose.bind(this);
   }
 
   handleOnDrop(acceptedFiles: File[]) {
@@ -37,6 +42,25 @@ class Post extends React.Component<{}, ArticleState> {
 
   handleChangeContent(e: React.FormEvent<HTMLInputElement>) {
     this.setState({content: e.currentTarget.value});
+  }
+
+  handleRemove(
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    data: ListItemProps
+  ) {
+    const fileName = data.content;
+    const targetFile = this.state.files.find(v => v.name === fileName);
+    const index = this.state.files.indexOf(targetFile as File);
+    this.state.files.splice(index, 1);
+    this.setState({files: this.state.files});
+  }
+
+  handleConfirmOpen() {
+    this.setState({confirm: true});
+  }
+
+  handleConfirmClose() {
+    this.setState({confirm: false});
   }
 
   async handleSubmit() {
@@ -108,14 +132,25 @@ class Post extends React.Component<{}, ArticleState> {
                     Open File Dialog
                   </button>
                 </div>
-                <List>
-                  {(this.state.files || []).map(function(file, i) {
-                    return <List.Item icon="image" content={file.name} />;
-                  })}
-                </List>
               </section>
             )}
           </Dropzone>
+          <List>
+            {(this.state.files || []).map((file, i) => {
+              return (
+                <List.Item
+                  icon="image"
+                  content={file.name}
+                  onClick={this.handleRemove}
+                />
+              );
+            })}
+          </List>
+          <Confirm
+            open={this.state.confirm}
+            onCancel={this.handleConfirmClose}
+            onConfirm={this.handleConfirmOpen}
+          />
           <Form.Button content="Submit" onClick={this.handleSubmit} />
         </Form>
       </Container>
