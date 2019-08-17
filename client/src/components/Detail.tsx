@@ -27,6 +27,7 @@ class Detail extends React.Component<
     };
     this.serverRequest = this.serverRequest.bind(this);
     this.deleteArticle = this.deleteArticle.bind(this);
+    this.nl2br = this.nl2br.bind(this);
   }
 
   serverRequest() {
@@ -54,13 +55,21 @@ class Detail extends React.Component<
     }
   };
 
+  nl2br(content: string) {
+  }
+
   componentDidMount() {
     this.serverRequest();
   }
 
-  Paragraph = () => <p>{[this.state.article.content].join('')}</p>;
+  Paragraph = () => (
+    <p style={{whiteSpace: 'pre-wrap'}}>
+      {[this.state.article.content].join('')}
+    </p>
+  );
 
   render() {
+    console.log(this.state.article.content);
     return (
       <Container text style={{marginTop: '3em'}}>
         <Header as="h1">{this.state.article.title}</Header>
