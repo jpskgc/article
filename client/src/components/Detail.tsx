@@ -55,6 +55,7 @@ class Detail extends React.Component<
 
   componentDidMount() {
     this.serverRequest();
+    this.setState(() => window.scrollTo(0, 0));
   }
 
   Paragraph = () => (
@@ -64,7 +65,6 @@ class Detail extends React.Component<
   );
 
   render() {
-    console.log(this.state.article.content);
     return (
       <Container text style={{marginTop: '3em'}}>
         <Header as="h1">{this.state.article.title}</Header>

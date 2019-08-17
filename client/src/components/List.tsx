@@ -45,9 +45,15 @@ class List extends React.Component<{}, ArticleState> {
     await this.setState({activePage: data.activePage as number});
     await this.setState({begin: this.state.activePage * 5 - 5});
     await this.setState({end: this.state.activePage * 5});
-    this.setState({
-      articleDatas: this.state.articles.slice(this.state.begin, this.state.end),
-    });
+    this.setState(
+      {
+        articleDatas: this.state.articles.slice(
+          this.state.begin,
+          this.state.end
+        ),
+      },
+      () => window.scrollTo(0, 0)
+    );
   }
 
   async componentDidMount() {
