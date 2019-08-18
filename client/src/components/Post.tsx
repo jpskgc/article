@@ -100,6 +100,10 @@ class Post extends React.Component<{}, ArticleState> {
     }
   };
 
+  componentDidMount() {
+    this.setState(() => window.scrollTo(0, 0));
+  }
+
   render() {
     return (
       <Container text style={{marginTop: '3em'}}>

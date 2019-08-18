@@ -79,16 +79,18 @@ class Detail extends React.Component<
             />
           );
         })}
-        {/* TODO fix button location when image exists */}
-        <Button color="green" as="a" href="/">
-          <Icon name="arrow left" />
-          Back to Home
-        </Button>
         {this.renderRedirect()}
-        <Button floated="right" onClick={this.deleteArticle}>
-          <Icon name="trash" />
-          Delete this Article
-        </Button>
+        {/* TODO fix button location when image exists */}
+        <Container tyle={{display: 'flex'}}>
+          <Button color="green" as="a" href="/">
+            <Icon name="arrow left" />
+            Back to Home
+          </Button>
+          <Button floated="right" onClick={this.deleteArticle}>
+            <Icon name="trash" />
+            Delete this Article
+          </Button>
+        </Container>
       </Container>
     );
   }

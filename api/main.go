@@ -123,7 +123,6 @@ func main() {
 			if errArticle != nil {
 				panic(errArticle.Error())
 			}
-			//TODO nil
 			rows, errImage := db.Query("SELECT image_name FROM images WHERE article_uuid  = ?", article.UUID)
 			if errImage != nil {
 				panic(errImage.Error())

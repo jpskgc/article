@@ -35,7 +35,11 @@ class List extends React.Component<{}, ArticleState> {
 
   async serverRequest() {
     const res = await axios.get('/api/articles');
-    this.setState({articles: res.data});
+    if (res.data == null) {
+      this.setState({articles: []});
+    } else {
+      this.setState({articles: res.data});
+    }
   }
 
   async btnClick(
