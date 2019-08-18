@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form, Container, List, ListItemProps, Confirm} from 'semantic-ui-react';
+import {Form, Container, List, ListItemProps, Icon} from 'semantic-ui-react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 import Dropzone from 'react-dropzone';
@@ -9,7 +9,6 @@ interface ArticleState {
   content: string;
   redirect: boolean;
   files: File[];
-  confirm: boolean;
 }
 
 class Post extends React.Component<{}, ArticleState> {
@@ -20,7 +19,6 @@ class Post extends React.Component<{}, ArticleState> {
       content: '',
       redirect: false,
       files: [],
-      confirm: false,
     };
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleChangeContent = this.handleChangeContent.bind(this);
@@ -28,8 +26,6 @@ class Post extends React.Component<{}, ArticleState> {
     this.renderRedirect = this.renderRedirect.bind(this);
     this.handleOnDrop = this.handleOnDrop.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
-    this.handleConfirmOpen = this.handleConfirmOpen.bind(this);
-    this.handleConfirmClose = this.handleConfirmClose.bind(this);
   }
 
   handleOnDrop(acceptedFiles: File[]) {
@@ -48,19 +44,13 @@ class Post extends React.Component<{}, ArticleState> {
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     data: ListItemProps
   ) {
-    const fileName = data.content;
+    //const fileName = data.content;
+    console.log(data.value);
+    const fileName = data.value;
     const targetFile = this.state.files.find(v => v.name === fileName);
     const index = this.state.files.indexOf(targetFile as File);
     this.state.files.splice(index, 1);
     this.setState({files: this.state.files});
-  }
-
-  handleConfirmOpen() {
-    this.setState({confirm: true});
-  }
-
-  handleConfirmClose() {
-    this.setState({confirm: false});
   }
 
   async handleSubmit() {
@@ -125,13 +115,33 @@ class Post extends React.Component<{}, ArticleState> {
             onChange={this.handleChangeContent}
           />
           {this.renderRedirect()}
-          {/* Fix desigin*/}
           <Dropzone accept="image/*" onDrop={this.handleOnDrop}>
             {({getRootProps, getInputProps, open}) => (
               <section>
-                <div {...getRootProps()} style={{margin: '20px auto'}}>
+                <div
+                  {...getRootProps()}
+                  style={{
+                    margin: '15px auto',
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    padding: '20px',
+                    borderWidth: 2,
+                    borderRadius: 2,
+                    borderColor: '#eeeeee',
+                    borderStyle: 'dashed',
+                    backgroundColor: '#fafafa',
+                    color: '#bdbdbd',
+                    outline: 'none',
+                    transition: 'border .24s ease-in-out',
+                  }}
+                >
                   <input {...getInputProps()} />
-                  <p>Drag 'n' drop some files here, or click to select files</p>
+                  <p>
+                    <Icon name="image" />
+                    Drag 'n' drop some files here, or click to select files
+                  </p>
                   <button type="button" onClick={open}>
                     Open File Dialog
                   </button>
@@ -139,22 +149,19 @@ class Post extends React.Component<{}, ArticleState> {
               </section>
             )}
           </Dropzone>
-          <List>
-            {(this.state.files || []).map((file, i) => {
-              return (
+          {(this.state.files || []).map((file, i) => {
+            return (
+              <List horizontal>
+                <List.Item icon="image" content={file.name} />
                 <List.Item
-                  icon="image"
-                  content={file.name}
+                  icon="delete"
+                  content="cancel"
+                  value={file.name}
                   onClick={this.handleRemove}
                 />
-              );
-            })}
-          </List>
-          <Confirm
-            open={this.state.confirm}
-            onCancel={this.handleConfirmClose}
-            onConfirm={this.handleConfirmOpen}
-          />
+              </List>
+            );
+          })}
           <Form.Button content="Submit" onClick={this.handleSubmit} />
         </Form>
       </Container>

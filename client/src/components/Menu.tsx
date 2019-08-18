@@ -30,13 +30,10 @@ class FixedMenuLayout extends React.Component<{}, {}> {
             <Menu.Item as="a" header>
               Project Name
             </Menu.Item>
-            <Menu.Item as="a" href="/">
-              Home
+            <Menu.Item name="home">
+              <Link to="/">Home</Link>
             </Menu.Item>
             {this.state.user ? (
-              // <Menu.Item as="a" href="/post">
-              //   Post
-              // </Menu.Item>
               <Menu.Item name="post">
                 <Link to="/post">Post</Link>
               </Menu.Item>
@@ -55,8 +52,8 @@ class FixedMenuLayout extends React.Component<{}, {}> {
               </Menu.Menu>
             ) : (
               <Menu.Menu position="right">
-                <Menu.Item name="login" href="/login">
-                  Log-in
+                <Menu.Item name="login">
+                  <Link to="/login">Log-in</Link>
                 </Menu.Item>
               </Menu.Menu>
             )}
