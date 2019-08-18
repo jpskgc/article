@@ -26,6 +26,7 @@ class Detail extends React.Component<
       redirect: false,
     };
     this.serverRequest = this.serverRequest.bind(this);
+    this.deleteArticle = this.deleteArticle.bind(this);
   }
 
   serverRequest() {
@@ -80,7 +81,6 @@ class Detail extends React.Component<
           );
         })}
         {this.renderRedirect()}
-        {/* TODO fix button location when image exists */}
         <Container tyle={{display: 'flex'}}>
           <Button color="green" as="a" href="/">
             <Icon name="arrow left" />

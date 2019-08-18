@@ -197,7 +197,6 @@ func main() {
 				f.Read(buffer)
 				fileBytes := bytes.NewReader(buffer)
 				fileType := http.DetectContentType(buffer)
-				//path := "/media/" + file.Filename
 				path := "/media/" + uu
 				params := &s3.PutObjectInput{
 					Bucket:        aws.String("article-s3-jpskgc"),
@@ -210,7 +209,6 @@ func main() {
 
 				fmt.Printf("response %s", awsutil.StringValue(resp))
 
-				//imageName.NAME = file.Filename
 				imageName.NAME = uu
 
 				imageNames = append(imageNames, imageName)
