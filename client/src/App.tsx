@@ -24,8 +24,8 @@ class App extends React.Component {
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
           <PrivateRouter path="/setting" component={Setting} />
-          <Route path="/" component={List} />
-          <Redirect to="/" />;
+          <Route exact path="/:id" component={List} />
+          <Redirect to="/1" />;
         </Switch>
       </div>
     );

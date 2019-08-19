@@ -1,4 +1,5 @@
 import React from 'react';
+import {RouteComponentProps, withRouter, Redirect} from 'react-router';
 import {Link} from 'react-router-dom';
 import {
   Grid,
@@ -17,10 +18,14 @@ interface ArticleState {
   begin: number;
   end: number;
   activePage: number;
+  redirect: boolean;
 }
 
-class List extends React.Component<{}, ArticleState> {
-  constructor(props: {}) {
+class List extends React.Component<
+  RouteComponentProps<{id: string}>,
+  ArticleState
+> {
+  constructor(props: RouteComponentProps<{id: string}>) {
     super(props);
     this.state = {
       articles: [],
@@ -28,9 +33,11 @@ class List extends React.Component<{}, ArticleState> {
       begin: 0,
       end: 5,
       activePage: 1,
+      redirect: false,
     };
     this.serverRequest = this.serverRequest.bind(this);
     this.btnClick = this.btnClick.bind(this);
+    this.setList = this.setList.bind(this);
   }
 
   async serverRequest() {
@@ -58,14 +65,37 @@ class List extends React.Component<{}, ArticleState> {
       },
       () => window.scrollTo(0, 0)
     );
+    this.setState({redirect: true});
   }
+
+  async setList() {
+    await this.setState({activePage: Number(this.props.match.params.id)});
+    await this.setState({begin: this.state.activePage * 5 - 5});
+    await this.setState({end: this.state.activePage * 5});
+    this.setState(
+      {
+        articleDatas: this.state.articles.slice(
+          this.state.begin,
+          this.state.end
+        ),
+      },
+      () => window.scrollTo(0, 0)
+    );
+  }
+
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      return <Redirect to={`/${this.state.activePage}`} />;
+    }
+  };
 
   async componentDidMount() {
     this.setState({articles: []});
     await this.serverRequest();
-    this.setState({
+    await this.setState({
       articleDatas: this.state.articles.slice(this.state.begin, this.state.end),
     });
+    this.setList();
   }
 
   render() {
@@ -93,13 +123,14 @@ class List extends React.Component<{}, ArticleState> {
           </Grid.Row>
         </Grid>
         <Pagination
-          defaultActivePage={1}
+          defaultActivePage={this.props.match.params.id}
           totalPages={Math.ceil(this.state.articles.length / 5)}
           onPageChange={this.btnClick}
         />
+        {this.renderRedirect()}
       </Container>
     );
   }
 }
 
-export default List;
+export default withRouter(List);

@@ -5,11 +5,17 @@ import axios from 'axios';
 import {Article} from '../articleData';
 import {Redirect} from 'react-router';
 import {Link} from 'react-router-dom';
+import firebase from '../firebase/firebase';
 
 interface ArticleState {
   article: Article;
   redirect: boolean;
+  user: firebase.User | null;
 }
+
+// interface UserStatus {
+//   user: firebase.User | null;
+// }
 
 class Detail extends React.Component<
   RouteComponentProps<{id: string}>,
@@ -25,6 +31,7 @@ class Detail extends React.Component<
         imageNames: [],
       },
       redirect: false,
+      user: null,
     };
     this.serverRequest = this.serverRequest.bind(this);
     this.deleteArticle = this.deleteArticle.bind(this);
@@ -58,6 +65,9 @@ class Detail extends React.Component<
   componentDidMount() {
     this.serverRequest();
     this.setState(() => window.scrollTo(0, 0));
+    firebase.auth().onAuthStateChanged(user => {
+      this.setState({user});
+    });
   }
 
   Paragraph = () => (
@@ -83,16 +93,20 @@ class Detail extends React.Component<
         })}
         {this.renderRedirect()}
         <Container tyle={{display: 'flex'}}>
-        <Link to="/">
-          <Button color="green">
-            <Icon name="arrow left" />
-            Home
-          </Button>
+          <Link to="/">
+            <Button color="green">
+              <Icon name="arrow left" />
+              Home
+            </Button>
           </Link>
-          <Button floated="right" onClick={this.deleteArticle}>
-            <Icon name="trash" />
-            Delete this Article
-          </Button>
+          {this.state.user ? (
+            <Button floated="right" onClick={this.deleteArticle}>
+              <Icon name="trash" />
+              Delete this Article
+            </Button>
+          ) : (
+            <div />
+          )}
         </Container>
       </Container>
     );
