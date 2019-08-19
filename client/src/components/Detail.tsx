@@ -4,6 +4,7 @@ import {Container, Header, Button, Icon} from 'semantic-ui-react';
 import axios from 'axios';
 import {Article} from '../articleData';
 import {Redirect} from 'react-router';
+import {Link} from 'react-router-dom';
 
 interface ArticleState {
   article: Article;
@@ -82,10 +83,12 @@ class Detail extends React.Component<
         })}
         {this.renderRedirect()}
         <Container tyle={{display: 'flex'}}>
-          <Button color="green" as="a" href="/">
+        <Link to="/">
+          <Button color="green">
             <Icon name="arrow left" />
-            Back to Home
+            Home
           </Button>
+          </Link>
           <Button floated="right" onClick={this.deleteArticle}>
             <Icon name="trash" />
             Delete this Article
