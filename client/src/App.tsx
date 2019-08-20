@@ -8,7 +8,6 @@ import Finish from './components/Finish';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import PrivateRouter from './components/PrivateRouter';
-import Setting from './components/Setting';
 import FinishDelete from './components/FinishDelete';
 
 class App extends React.Component {
@@ -23,7 +22,6 @@ class App extends React.Component {
           <PrivateRouter path="/post" component={Post} />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
-          <PrivateRouter path="/setting" component={Setting} />
           <Route exact path="/:id" component={List} />
           <Redirect to="/1" />;
         </Switch>

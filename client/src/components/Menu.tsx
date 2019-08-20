@@ -42,9 +42,6 @@ class FixedMenuLayout extends React.Component<{}, {}> {
             )}
             {this.state.user ? (
               <Menu.Menu position="right">
-                <Menu.Item name="setting">
-                  <Link to="/setting">Setting</Link>
-                </Menu.Item>
                 <Menu.Item name="logout" onClick={this.logout}>
                   <Link to="">Log-out</Link>
                 </Menu.Item>
