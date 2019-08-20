@@ -13,8 +13,8 @@ import axios from 'axios';
 import {Article} from '../articleData';
 
 interface ArticleState {
-  articles: Article[];
-  articleDatas: Article[];
+  articleFromApi: Article[];
+  articleToDisplay: Article[];
   begin: number;
   end: number;
   activePage: number;
@@ -28,53 +28,48 @@ class List extends React.Component<
   constructor(props: RouteComponentProps<{id: string}>) {
     super(props);
     this.state = {
-      articles: [],
-      articleDatas: [],
+      articleFromApi: [],
+      articleToDisplay: [],
       begin: 0,
       end: 5,
       activePage: 1,
       redirect: false,
     };
-    this.serverRequest = this.serverRequest.bind(this);
-    this.btnClick = this.btnClick.bind(this);
+    this.serverRequestArticle = this.serverRequestArticle.bind(this);
+    this.pageChange = this.pageChange.bind(this);
     this.setList = this.setList.bind(this);
+    this.setActiveList = this.setActiveList.bind(this);
   }
 
-  async serverRequest() {
+  async serverRequestArticle() {
     const res = await axios.get('/api/articles');
     if (res.data == null) {
-      this.setState({articles: []});
+      this.setState({articleFromApi: []});
     } else {
-      this.setState({articles: res.data});
+      this.setState({articleFromApi: res.data});
     }
   }
 
-  async btnClick(
+  async pageChange(
     event: React.MouseEvent<HTMLAnchorElement>,
     data: PaginationProps
   ) {
     await this.setState({activePage: data.activePage as number});
-    await this.setState({begin: this.state.activePage * 5 - 5});
-    await this.setState({end: this.state.activePage * 5});
-    this.setState(
-      {
-        articleDatas: this.state.articles.slice(
-          this.state.begin,
-          this.state.end
-        ),
-      },
-      () => window.scrollTo(0, 0)
-    );
+    await this.setActiveList();
     this.setState({redirect: true});
   }
 
   async setList() {
     await this.setState({activePage: Number(this.props.match.params.id)});
+    this.setActiveList();
+  }
+
+  async setActiveList() {
     await this.setState({begin: this.state.activePage * 5 - 5});
     await this.setState({end: this.state.activePage * 5});
     this.setState(
       {
-        articleDatas: this.state.articles.slice(
+        articleToDisplay: this.state.articleFromApi.slice(
           this.state.begin,
           this.state.end
         ),
@@ -90,10 +85,13 @@ class List extends React.Component<
   };
 
   async componentDidMount() {
-    this.setState({articles: []});
-    await this.serverRequest();
+    this.setState({articleFromApi: []});
+    await this.serverRequestArticle();
     await this.setState({
-      articleDatas: this.state.articles.slice(this.state.begin, this.state.end),
+      articleToDisplay: this.state.articleFromApi.slice(
+        this.state.begin,
+        this.state.end
+      ),
     });
     this.setList();
   }
@@ -103,7 +101,7 @@ class List extends React.Component<
       <Container style={{marginTop: '3em'}} text>
         <Grid columns={1} divided="vertically">
           <Grid.Row>
-            {(this.state.articleDatas || []).map(function(articleData, i) {
+            {(this.state.articleToDisplay || []).map(function(articleData, i) {
               return (
                 <Grid.Column>
                   <Segment>
@@ -124,8 +122,8 @@ class List extends React.Component<
         </Grid>
         <Pagination
           defaultActivePage={this.props.match.params.id}
-          totalPages={Math.ceil(this.state.articles.length / 5)}
-          onPageChange={this.btnClick}
+          totalPages={Math.ceil(this.state.articleFromApi.length / 5)}
+          onPageChange={this.pageChange}
         />
         {this.renderRedirect()}
       </Container>
