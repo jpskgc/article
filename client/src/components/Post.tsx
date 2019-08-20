@@ -44,8 +44,6 @@ class Post extends React.Component<{}, ArticleState> {
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     data: ListItemProps
   ) {
-    //const fileName = data.content;
-    console.log(data.value);
     const fileName = data.value;
     const targetFile = this.state.files.find(v => v.name === fileName);
     const index = this.state.files.indexOf(targetFile as File);
@@ -58,12 +56,12 @@ class Post extends React.Component<{}, ArticleState> {
       redirect: true,
     });
 
-    const data = {
+    const articleTextData = {
       title: this.state.title,
       content: this.state.content,
     };
 
-    const res = await axios.post('/api/post', data);
+    const res = await axios.post('/api/post', articleTextData);
 
     const formData = new FormData();
     for (var i in this.state.files) {
