@@ -13,10 +13,6 @@ interface ArticleState {
   user: firebase.User | null;
 }
 
-// interface UserStatus {
-//   user: firebase.User | null;
-// }
-
 class Detail extends React.Component<
   RouteComponentProps<{id: string}>,
   ArticleState
@@ -33,11 +29,11 @@ class Detail extends React.Component<
       redirect: false,
       user: null,
     };
-    this.serverRequest = this.serverRequest.bind(this);
+    this.getArticle = this.getArticle.bind(this);
     this.deleteArticle = this.deleteArticle.bind(this);
   }
 
-  serverRequest() {
+  getArticle() {
     axios
       .get('/api/article/' + this.props.match.params.id)
       .then(response => {
@@ -63,7 +59,7 @@ class Detail extends React.Component<
   };
 
   componentDidMount() {
-    this.serverRequest();
+    this.getArticle();
     this.setState(() => window.scrollTo(0, 0));
     firebase.auth().onAuthStateChanged(user => {
       this.setState({user});
