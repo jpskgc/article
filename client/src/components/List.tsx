@@ -35,13 +35,13 @@ class List extends React.Component<
       activePage: 1,
       redirect: false,
     };
-    this.serverRequestArticle = this.serverRequestArticle.bind(this);
+    this.getArticle = this.getArticle.bind(this);
     this.pageChange = this.pageChange.bind(this);
     this.setList = this.setList.bind(this);
     this.setActiveList = this.setActiveList.bind(this);
   }
 
-  async serverRequestArticle() {
+  async getArticle() {
     const res = await axios.get('/api/articles');
     if (res.data == null) {
       this.setState({articleFromApi: []});
@@ -86,7 +86,7 @@ class List extends React.Component<
 
   async componentDidMount() {
     this.setState({articleFromApi: []});
-    await this.serverRequestArticle();
+    await this.getArticle();
     await this.setState({
       articleToDisplay: this.state.articleFromApi.slice(
         this.state.begin,
