@@ -89,12 +89,10 @@ class Detail extends React.Component<
         })}
         {this.renderRedirect()}
         <Container tyle={{display: 'flex'}}>
-          <Link to="/">
-            <Button color="green">
+            <Button color="green" onClick={() => this.props.history.goBack()}>
               <Icon name="arrow left" />
               Home
             </Button>
-          </Link>
           {this.state.user ? (
             <Button floated="right" onClick={this.deleteArticle}>
               <Icon name="trash" />
