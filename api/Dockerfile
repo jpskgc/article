@@ -1,8 +1,8 @@
 FROM golang:latest
 ENV GO111MODULE=on
-WORKDIR /go/src/github.com/jpskgc/article
+WORKDIR /go/src/github.com/jpskgc/article/app
 COPY . .
 RUN go mod download
 RUN go build
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
-ENTRYPOINT ["/go/src/github.com/jpskgc/article/api"]
+ENTRYPOINT ["/go/src/github.com/jpskgc/article/app/api"]
