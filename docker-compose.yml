@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile.dev
       context: ./api
     volumes:
-      - ./api:/app
+      - ./api:/go/src/github.com/jpskgc/article/
     depends_on:
       - db
     tty: true
