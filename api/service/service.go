@@ -22,38 +22,11 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-// type Article struct {
-// 	ID         int         `json:"id"`
-// 	UUID       string      `json:"uuid"`
-// 	TITLE      string      `json:"title"`
-// 	CONTENT    string      `json:"content"`
-// 	IMAGENAMES []ImageName `json:"imageNames"`
-// }
-
-// type ImageName struct {
-// 	NAME string `json:"name"`
-// }
-
-// type ImageData struct {
-// 	ARTICLEUUID string      `json:"articleUUID"`
-// 	IMAGENAMES  []ImageName `json:"imageNames"`
-// }
-
-// type Param struct {
-// 	Bucket      string
-// 	Key         string
-// 	Expires     string
-// 	ContentType string
-// }
-
 func GetArticleService(c *gin.Context, db *sql.DB) []util.Article {
 	var articles []util.Article
 
 	results := dao.GetArticleDao(db)
-	// results, err := db.Query("SELECT * FROM articles")
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
+
 	article := util.Article{}
 	for results.Next() {
 		err := results.Scan(&article.ID, &article.UUID, &article.TITLE, &article.CONTENT)
@@ -69,16 +42,7 @@ func GetArticleService(c *gin.Context, db *sql.DB) []util.Article {
 func GetSingleArticleService(c *gin.Context, db *sql.DB) util.Article {
 
 	article, rows := dao.GetSingleArticleDao(c, db)
-	// id := c.Params.ByName("id")
-	// article := Article{}
-	// errArticle := db.QueryRow("SELECT * FROM articles WHERE id = ?", id).Scan(&article.ID, &article.UUID, &article.TITLE, &article.CONTENT)
-	// if errArticle != nil {
-	// 	panic(errArticle.Error())
-	// }
-	// rows, errImage := db.Query("SELECT image_name FROM images WHERE article_uuid  = ?", article.UUID)
-	// if errImage != nil {
-	// 	panic(errImage.Error())
-	// }
+
 	for rows.Next() {
 		imageName := util.ImageName{}
 		err := rows.Scan(&imageName.NAME)
@@ -93,11 +57,6 @@ func GetSingleArticleService(c *gin.Context, db *sql.DB) util.Article {
 
 func DeleteArticleService(c *gin.Context, db *sql.DB) {
 	dao.DeleteArticleDao(c, db)
-	// id := c.Params.ByName("id")
-	// _, err := db.Exec("DELETE FROM articles WHERE id= ?", id)
-	// if err != nil {
-	// 	log.Fatalf("db.Exec(): %s\n", err)
-	// }
 }
 
 func PostService(c *gin.Context, db *sql.DB) string {
@@ -109,11 +68,6 @@ func PostService(c *gin.Context, db *sql.DB) string {
 	var article util.Article
 	c.BindJSON(&article)
 	dao.PostDao(db, article, uu)
-	// ins, err := db.Prepare("INSERT INTO articles(uuid, title,content) VALUES(?,?,?)")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	//ins.Exec(uu, article.TITLE, article.CONTENT)
 
 	return uu
 }
@@ -175,14 +129,5 @@ func PostImageService(c *gin.Context) []util.ImageName {
 
 func PostImageToDBService(c *gin.Context, db *sql.DB) {
 	dao.PostImageToDBDao(c, db)
-	// var imageData util.ImageData
-	// c.BindJSON(&imageData)
 
-	// for _, imageName := range imageData.IMAGENAMES {
-	// 	ins, err := db.Prepare("INSERT INTO images(article_uuid, image_name) VALUES(?,?)")
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-	// 	ins.Exec(imageData.ARTICLEUUID, imageName.NAME)
-	// }
 }
