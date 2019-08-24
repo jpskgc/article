@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile.dev
       context: ./api
     volumes:
-      - ./api:/go/src/github.com/jpskgc/article/
+      - ./api:/go/src/github.com/jpskgc/article/app
     depends_on:
       - db
     tty: true
@@ -34,6 +34,7 @@ services:
       - MYSQL_USER
       - MYSQL_PASSWORD
       - MYSQL_HOST
+      - GO111MODULE
   client:
     build:
       dockerfile: Dockerfile.dev
