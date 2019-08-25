@@ -9,8 +9,8 @@ import {
   Pagination,
   PaginationProps,
 } from 'semantic-ui-react';
-import axios from 'axios';
 import {Article} from '../articleData';
+import {getArticleFactory} from '../api/articleAPI';
 
 interface ArticleState {
   articleFromApi: Article[];
@@ -42,11 +42,13 @@ class List extends React.Component<
   }
 
   async getArticle() {
-    const res = await axios.get('/api/articles');
-    if (res.data == null) {
+    const getArticle = getArticleFactory();
+    const articleData = await getArticle();
+
+    if (articleData == null) {
       this.setState({articleFromApi: []});
     } else {
-      this.setState({articleFromApi: res.data});
+      this.setState({articleFromApi: articleData});
     }
   }
 
