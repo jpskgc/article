@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="ui text container"
+  style={
+    Object {
+      "marginTop": "3em",
+    }
+  }
+>
+  <h1
+    className="ui header"
+  >
+    
+  </h1>
+  <p
+    style={
+      Object {
+        "whiteSpace": "pre-wrap",
+        "wordBreak": "break-all",
+      }
+    }
+  >
+    
+  </p>
+  <div
+    className="ui container"
+    tyle={
+      Object {
+        "display": "flex",
+      }
+    }
+  >
+    <button
+      className="ui green button"
+      onClick={[Function]}
+    >
+      <i
+        aria-hidden="true"
+        className="arrow left icon"
+        onClick={[Function]}
+      />
+      Home
+    </button>
+    <div />
+  </div>
+</div>
+`;

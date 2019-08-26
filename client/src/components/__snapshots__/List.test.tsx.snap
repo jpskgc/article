@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="ui text container"
+  style={
+    Object {
+      "marginTop": "3em",
+    }
+  }
+>
+  <div
+    className="ui vertically divided one column grid"
+  >
+    <div
+      className="row"
+    />
+  </div>
+  <div
+    aria-label="Pagination Navigation"
+    className="ui pagination menu"
+    role="navigation"
+  >
+    <a
+      aria-current={false}
+      aria-disabled={false}
+      aria-label="First item"
+      className="item"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      tabIndex={0}
+      type="firstItem"
+      value={1}
+    >
+      «
+    </a>
+    <a
+      aria-current={false}
+      aria-disabled={false}
+      aria-label="Previous item"
+      className="item"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      tabIndex={0}
+      type="prevItem"
+      value={NaN}
+    >
+      ⟨
+    </a>
+    <a
+      aria-current={false}
+      aria-disabled={false}
+      aria-label="Next item"
+      className="item"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      tabIndex={0}
+      type="nextItem"
+      value={NaN}
+    >
+      ⟩
+    </a>
+    <a
+      aria-current={false}
+      aria-disabled={false}
+      aria-label="Last item"
+      className="item"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      tabIndex={0}
+      type="lastItem"
+      value={0}
+    >
+      »
+    </a>
+  </div>
+</div>
+`;
