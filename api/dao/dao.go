@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/jpskgc/article/api/util"
+	"article/api/util"
 )
 
 func GetArticleDao(db *sql.DB) *sql.Rows {

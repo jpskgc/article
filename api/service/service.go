@@ -11,9 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"github.com/jpskgc/article/api/dao"
+	"article/api/dao"
 
-	"github.com/jpskgc/article/api/util"
+	"article/api/util"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awsutil"

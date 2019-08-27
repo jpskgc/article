@@ -11,7 +11,7 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"github.com/jpskgc/article/api/controller"
+	"article/api/controller"
 )
 
 func main() {

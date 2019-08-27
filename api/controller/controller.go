@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/jpskgc/article/api/service"
+	"article/api/service"
 
 	"github.com/gin-gonic/gin"
 )
