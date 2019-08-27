@@ -1,8 +1,11 @@
 FROM golang:latest
-ENV GO111MODULE=on
-WORKDIR /go/src/github.com/jpskgc/article/app
+WORKDIR '/app'
+RUN go get github.com/gin-contrib/cors
+RUN go get github.com/gin-gonic/gin
+RUN go get github.com/go-sql-driver/mysql
+RUN go get github.com/google/uuid
+RUN go get github.com/aws/aws-sdk-go/aws
+RUN go get github.com/aws/aws-sdk-go/service/s3
+RUN go get github.com/joho/godotenv
 COPY . .
-RUN go mod download
-RUN go build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
-ENTRYPOINT ["/go/src/github.com/jpskgc/article/app/api"]
+CMD ["go", "run", "main.go", "controller.go", "service.go", "dao.go", "util.go"]

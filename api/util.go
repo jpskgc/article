@@ -1,4 +1,4 @@
-package util
+package main
 
 type Article struct {
 	ID         int         `json:"id"`

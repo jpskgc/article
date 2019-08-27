@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="ui text container"
+  style={
+    Object {
+      "marginTop": "3em",
+    }
+  }
+>
+  <div
+    className="ui green message"
+  >
+    Your post was successful
+  </div>
+  <a
+    className="ui green button"
+    href="/"
+    onClick={[Function]}
+    role="button"
+  >
+    <i
+      aria-hidden="true"
+      className="arrow left icon"
+      onClick={[Function]}
+    />
+    Back to Home
+  </a>
+</div>
+`;

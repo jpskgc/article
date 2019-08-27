@@ -1,8 +1,12 @@
 import React from 'react';
 import {Form, Container, List, ListItemProps, Icon} from 'semantic-ui-react';
-import axios from 'axios';
 import {Redirect} from 'react-router';
 import Dropzone from 'react-dropzone';
+import {
+  postArticleFactory,
+  postArticleImageFactory,
+  postArticleImageToDBFactory,
+} from '../api/articleAPI';
 
 interface ArticleState {
   title: string;
@@ -61,25 +65,24 @@ class Post extends React.Component<{}, ArticleState> {
       content: this.state.content,
     };
 
-    const res = await axios.post('/api/post', articleTextData);
+    const postArticle = postArticleFactory();
+    const res = await postArticle(articleTextData);
 
     const formData = new FormData();
     for (var i in this.state.files) {
       formData.append('images[]', this.state.files[i]);
     }
 
-    const resImageNames = await axios.post('/api/post/image', formData, {
-      headers: {'Content-Type': 'multipart/form-data'},
-    });
+    const postArticleImage = postArticleImageFactory();
+    const resImageNames = await postArticleImage(formData);
 
     const imageData = {
-      articleUUID: res.data.uuid,
-      imageNames: resImageNames.data,
+      articleUUID: res.uuid,
+      imageNames: resImageNames,
     };
 
-    axios.post('/api/post/image/db', imageData).then(res => {
-      console.log(res);
-    });
+    const postArticleImageToDB = postArticleImageToDBFactory();
+    postArticleImageToDB(imageData);
   }
 
   renderRedirect = () => {

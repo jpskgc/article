@@ -1,4 +1,4 @@
-package service
+package main
 
 import (
 	"bytes"
@@ -11,10 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"github.com/jpskgc/article/api/dao"
-
-	"github.com/jpskgc/article/api/util"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awsutil"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -22,12 +18,12 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-func GetArticleService(c *gin.Context, db *sql.DB) []util.Article {
-	var articles []util.Article
+func GetArticleService(c *gin.Context, db *sql.DB) []Article {
+	var articles []Article
 
-	results := dao.GetArticleDao(db)
+	results := GetArticleDao(db)
 
-	article := util.Article{}
+	article := Article{}
 	for results.Next() {
 		err := results.Scan(&article.ID, &article.UUID, &article.TITLE, &article.CONTENT)
 		if err != nil {
@@ -39,12 +35,12 @@ func GetArticleService(c *gin.Context, db *sql.DB) []util.Article {
 	return articles
 }
 
-func GetSingleArticleService(c *gin.Context, db *sql.DB) util.Article {
+func GetSingleArticleService(c *gin.Context, db *sql.DB) Article {
 
-	article, rows := dao.GetSingleArticleDao(c, db)
+	article, rows := GetSingleArticleDao(c, db)
 
 	for rows.Next() {
-		imageName := util.ImageName{}
+		imageName := ImageName{}
 		err := rows.Scan(&imageName.NAME)
 		if err != nil {
 			panic(err.Error())
@@ -56,7 +52,7 @@ func GetSingleArticleService(c *gin.Context, db *sql.DB) util.Article {
 }
 
 func DeleteArticleService(c *gin.Context, db *sql.DB) {
-	dao.DeleteArticleDao(c, db)
+	DeleteArticleDao(c, db)
 }
 
 func PostService(c *gin.Context, db *sql.DB) string {
@@ -65,14 +61,14 @@ func PostService(c *gin.Context, db *sql.DB) string {
 		fmt.Println(err)
 	}
 	uu := u.String()
-	var article util.Article
+	var article Article
 	c.BindJSON(&article)
-	dao.PostDao(db, article, uu)
+	PostDao(db, article, uu)
 
 	return uu
 }
 
-func PostImageService(c *gin.Context) []util.ImageName {
+func PostImageService(c *gin.Context) []ImageName {
 	creds := credentials.NewStaticCredentials(os.Getenv("AWS_ACCESS_KEY_ID"), os.Getenv("AWS_SECRET_ACCESS_KEY"), "")
 
 	cfg := aws.NewConfig().WithRegion("ap-northeast-1").WithCredentials(creds)
@@ -82,8 +78,8 @@ func PostImageService(c *gin.Context) []util.ImageName {
 
 	files := form.File["images[]"]
 
-	var imageNames []util.ImageName
-	imageName := util.ImageName{}
+	var imageNames []ImageName
+	imageName := ImageName{}
 
 	for _, file := range files {
 
@@ -128,6 +124,6 @@ func PostImageService(c *gin.Context) []util.ImageName {
 }
 
 func PostImageToDBService(c *gin.Context, db *sql.DB) {
-	dao.PostImageToDBDao(c, db)
+	PostImageToDBDao(c, db)
 
 }

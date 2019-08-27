@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    className="ui inverted top fixed menu"
+  >
+    <div
+      className="ui container"
+    >
+      <a
+        className="header item"
+        onClick={[Function]}
+      >
+        Project Name
+      </a>
+      <div
+        className="item"
+        onClick={[Function]}
+      >
+        <a
+          href="/"
+          onClick={[Function]}
+        >
+          Home
+        </a>
+      </div>
+      <div />
+      <div
+        className="right menu"
+      >
+        <div
+          className="item"
+          onClick={[Function]}
+        >
+          <a
+            href="/login"
+            onClick={[Function]}
+          >
+            Log-in
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,11 +1,10 @@
 import React from 'react';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {Container, Header, Button, Icon} from 'semantic-ui-react';
-import axios from 'axios';
 import {Article} from '../articleData';
 import {Redirect} from 'react-router';
-import {Link} from 'react-router-dom';
 import firebase from '../firebase/firebase';
+import {getSingleArticleFactory, deleteArticleFactory} from '../api/articleAPI';
 
 interface ArticleState {
   article: Article;
@@ -33,23 +32,19 @@ class Detail extends React.Component<
     this.deleteArticle = this.deleteArticle.bind(this);
   }
 
-  getArticle() {
-    axios
-      .get('/api/article/' + this.props.match.params.id)
-      .then(response => {
-        this.setState({article: response.data});
-      })
-      .catch(response => console.log('ERROR!! occurred in Backend.'));
+  async getArticle() {
+    const getSingleArticle = getSingleArticleFactory();
+    const articleData = await getSingleArticle(this.props.match.params.id);
+    this.setState({
+      article: articleData,
+    });
   }
 
-  deleteArticle() {
+  async deleteArticle() {
     this.setState({redirect: true});
-    axios
-      .get('/api/delete/' + this.props.match.params.id)
-      .then(response => {
-        this.setState({article: response.data});
-      })
-      .catch(response => console.log('ERROR!! occurred in Backend.'));
+    const deleteArticle = deleteArticleFactory();
+    const response = await deleteArticle(this.props.match.params.id);
+    this.setState({article: response});
   }
 
   renderRedirect = () => {
@@ -89,12 +84,10 @@ class Detail extends React.Component<
         })}
         {this.renderRedirect()}
         <Container tyle={{display: 'flex'}}>
-          <Link to="/">
-            <Button color="green">
-              <Icon name="arrow left" />
-              Home
-            </Button>
-          </Link>
+          <Button color="green" onClick={() => this.props.history.goBack()}>
+            <Icon name="arrow left" />
+            Home
+          </Button>
           {this.state.user ? (
             <Button floated="right" onClick={this.deleteArticle}>
               <Icon name="trash" />

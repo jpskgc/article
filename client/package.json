@@ -46,5 +46,9 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/react-test-renderer": "^16.9.0",
+    "axios-mock-adapter": "^1.17.0",
+    "react-test-renderer": "^16.8.6"
+  }
 }

@@ -10,8 +10,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/joho/godotenv"
-
-	"github.com/jpskgc/article/api/controller"
 )
 
 func main() {
@@ -67,22 +65,22 @@ func main() {
 	api := router.Group("/api")
 	{
 		api.GET("/articles", func(c *gin.Context) {
-			controller.GetArticleController(c, db)
+			GetArticleController(c, db)
 		})
 		api.GET("/article/:id", func(c *gin.Context) {
-			controller.GetSingleArticleController(c, db)
+			GetSingleArticleController(c, db)
 		})
 		api.GET("/delete/:id", func(c *gin.Context) {
-			controller.DeleteArticleController(c, db)
+			DeleteArticleController(c, db)
 		})
 		api.POST("/post", func(c *gin.Context) {
-			controller.PostController(c, db)
+			PostController(c, db)
 		})
 		api.POST("/post/image", func(c *gin.Context) {
-			controller.PostImageController(c)
+			PostImageController(c)
 		})
 		api.POST("/post/image/db", func(c *gin.Context) {
-			controller.PostImageToDBController(c, db)
+			PostImageToDBController(c, db)
 		})
 	}
 
