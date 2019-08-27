@@ -8,4 +8,4 @@ RUN go get github.com/aws/aws-sdk-go/aws
 RUN go get github.com/aws/aws-sdk-go/service/s3
 RUN go get github.com/joho/godotenv
 COPY . .
-CMD ["go", "run", "main.go"]
+CMD ["go", "run", "main.go", "controller.go", "service.go", "dao.go", "util.go"]
