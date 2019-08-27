@@ -1,10 +1,12 @@
-package main
+package dao
 
 import (
 	"database/sql"
 	"log"
 
 	"github.com/gin-gonic/gin"
+
+	"article/api/util"
 )
 
 func GetArticleDao(db *sql.DB) *sql.Rows {
@@ -16,9 +18,9 @@ func GetArticleDao(db *sql.DB) *sql.Rows {
 	return results
 }
 
-func GetSingleArticleDao(c *gin.Context, db *sql.DB) (Article, *sql.Rows) {
+func GetSingleArticleDao(c *gin.Context, db *sql.DB) (util.Article, *sql.Rows) {
 	id := c.Params.ByName("id")
-	article := Article{}
+	article := util.Article{}
 	errArticle := db.QueryRow("SELECT * FROM articles WHERE id = ?", id).Scan(&article.ID, &article.UUID, &article.TITLE, &article.CONTENT)
 	if errArticle != nil {
 		panic(errArticle.Error())
@@ -39,7 +41,7 @@ func DeleteArticleDao(c *gin.Context, db *sql.DB) {
 	}
 }
 
-func PostDao(db *sql.DB, article Article, uu string) {
+func PostDao(db *sql.DB, article util.Article, uu string) {
 	ins, err := db.Prepare("INSERT INTO articles(uuid, title,content) VALUES(?,?,?)")
 	if err != nil {
 		log.Fatal(err)
@@ -48,7 +50,7 @@ func PostDao(db *sql.DB, article Article, uu string) {
 }
 
 func PostImageToDBDao(c *gin.Context, db *sql.DB) {
-	var imageData ImageData
+	var imageData util.ImageData
 	c.BindJSON(&imageData)
 
 	for _, imageName := range imageData.IMAGENAMES {

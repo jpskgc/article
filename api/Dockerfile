@@ -1,11 +1,10 @@
 FROM golang:latest
-WORKDIR '/app'
-RUN go get github.com/gin-contrib/cors
-RUN go get github.com/gin-gonic/gin
-RUN go get github.com/go-sql-driver/mysql
-RUN go get github.com/google/uuid
-RUN go get github.com/aws/aws-sdk-go/aws
-RUN go get github.com/aws/aws-sdk-go/service/s3
-RUN go get github.com/joho/godotenv
+ENV GO111MODULE=on
+WORKDIR /app
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
 COPY . .
-CMD ["go", "run", "main.go", "controller.go", "service.go", "dao.go", "util.go"]
+RUN go build
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
+ENTRYPOINT ["/app/api"]
