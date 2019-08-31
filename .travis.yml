@@ -6,7 +6,7 @@ services:
 before_install:
   - sudo /etc/init.d/mysql stop
   - docker build -t jpskgc/react-test -f ./client/Dockerfile.dev ./client
-  - docker-compose up
+  - docker-compose up --build
 
 script:
   - docker run -e CI=true jpskgc/react-test npm test
