@@ -5,11 +5,11 @@ services:
 
 before_install:
   - docker build -t jpskgc/react-test -f ./client/Dockerfile.dev ./client
-  - docker build -t jpskgc/golang-test -f ./api/Dockerfile.dev ./api
+  - docker-compose up -d
 
 script:
   - docker run -e CI=true jpskgc/react-test npm test
-  - docker run -e CI=true jpskgc/golang-test go test -v ./...
+  - docker-compose exec api go test -v ./...
 
 after_success:
   - docker build -t jpskgc/multi-client ./client
