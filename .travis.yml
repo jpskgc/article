@@ -4,12 +4,13 @@ services:
   - docker
 
 before_install:
+  - sudo /etc/init.d/mysql stop
   - docker build -t jpskgc/react-test -f ./client/Dockerfile.dev ./client
-  - docker build -t jpskgc/api-test -f ./api/Dockerfile.dev ./api
+  - docker-compose up -d
 
 script:
   - docker run -e CI=true jpskgc/react-test npm test
-  - docker run -e CI=true jpskgc/api-test go test -v ./dao
+  - docker-compose exec golang go test -v ./...
 
 after_success:
   - docker build -t jpskgc/multi-client ./client
