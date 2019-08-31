@@ -10,7 +10,7 @@ before_install:
 
 script:
   - docker run -e CI=true jpskgc/react-test npm test
-  - docker-compose exec golang go test -v ./...
+  - docker-compose exec api go test -v ./...
 
 after_success:
   - docker build -t jpskgc/multi-client ./client
