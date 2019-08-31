@@ -49,12 +49,11 @@ func PostDao(db *sql.DB, article util.Article, uu string) {
 	ins.Exec(uu, article.TITLE, article.CONTENT)
 }
 
-func PostImageToDBDao(c *gin.Context, db *sql.DB) {
-	var imageData util.ImageData
-	c.BindJSON(&imageData)
+func PostImageToDBDao(imageData util.ImageData, db *sql.DB) {
+	ins, err := db.Prepare("INSERT INTO images(article_uuid, image_name) VALUES(?,?)")
 
 	for _, imageName := range imageData.IMAGENAMES {
-		ins, err := db.Prepare("INSERT INTO images(article_uuid, image_name) VALUES(?,?)")
+
 		if err != nil {
 			log.Fatal(err)
 		}

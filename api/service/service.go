@@ -128,6 +128,7 @@ func PostImageService(c *gin.Context) []util.ImageName {
 }
 
 func PostImageToDBService(c *gin.Context, db *sql.DB) {
-	dao.PostImageToDBDao(c, db)
-
+	var imageData util.ImageData
+	c.BindJSON(&imageData)
+	dao.PostImageToDBDao(imageData, db)
 }
