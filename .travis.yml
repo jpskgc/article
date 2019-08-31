@@ -4,21 +4,16 @@ services:
   - docker
 
 before_install:
-  - sudo /etc/init.d/mysql stop
   - docker build -t jpskgc/react-test -f ./client/Dockerfile.dev ./client
-  - docker-compose up --build
 
 script:
   - docker run -e CI=true jpskgc/react-test npm test
-  - docker-compose exec api go test -v ./dao
 
 after_success:
   - docker build -t jpskgc/multi-client ./client
   - docker build -t jpskgc/multi-nginx ./nginx
   - docker build -t jpskgc/multi-api ./api
-  # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # Take those images and push them to docker hub
   - docker push jpskgc/multi-client
   - docker push jpskgc/multi-nginx
   - docker push jpskgc/multi-api
