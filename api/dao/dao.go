@@ -2,6 +2,7 @@ package dao
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -35,10 +36,52 @@ func GetSingleArticleDao(c *gin.Context, db *sql.DB) (util.Article, *sql.Rows) {
 
 func DeleteArticleDao(c *gin.Context, db *sql.DB) {
 	id := c.Params.ByName("id")
-	_, err := db.Exec("DELETE FROM articles WHERE id= ?", id)
-	if err != nil {
-		log.Fatalf("db.Exec(): %s\n", err)
+
+	article := util.Article{}
+	errArticle := db.QueryRow("SELECT * FROM articles WHERE id = ?", id).Scan(&article.ID, &article.UUID, &article.TITLE, &article.CONTENT)
+	if errArticle != nil {
+		panic(errArticle.Error())
 	}
+
+	var imageNames []util.ImageName
+
+	rows, errImage := db.Query("SELECT image_name FROM images WHERE article_uuid  = ?", article.UUID)
+	if errImage != nil {
+		panic(errImage.Error())
+	}
+
+	for rows.Next() {
+		imageName := util.ImageName{}
+		err := rows.Scan(&imageName.NAME)
+		if err != nil {
+			panic(err.Error())
+		}
+		imageNames = append(imageNames, imageName)
+	}
+
+	tx, err := db.Begin()
+	if err != nil {
+		fmt.Printf("Failed to begin transaction : %s", err)
+		return
+	}
+
+	_, deleteArticleErr := tx.Exec("DELETE FROM articles WHERE id= ?", id)
+	if deleteArticleErr != nil {
+		log.Fatalf("db.Exec(): %s\n", deleteArticleErr)
+	}
+
+	_, errDeleteImage := tx.Exec("DELETE FROM images WHERE article_uuid= ?", article.UUID)
+	if errDeleteImage != nil {
+		log.Fatalf("db.Exec(): %s\n", errDeleteImage)
+	}
+	if err != nil {
+		tx.Rollback()
+		log.Fatal(err)
+		return
+	}
+	tx.Commit()
+	DeleteS3Image(imageNames)
+
 }
 
 func PostDao(db *sql.DB, article util.Article, uu string) {
