@@ -1,7 +1,6 @@
 package service
 
 import (
-	"database/sql"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -12,10 +11,14 @@ import (
 	"article/api/util"
 )
 
-func GetArticleService(c *gin.Context, db *sql.DB) []util.Article {
+type Service struct {
+	dao *dao.Dao
+}
+
+func (s Service) GetArticleService(c *gin.Context) []util.Article {
 	var articles []util.Article
 
-	results := dao.GetArticleDao(db)
+	results := s.dao.GetArticleDao()
 
 	article := util.Article{}
 	for results.Next() {
@@ -29,9 +32,9 @@ func GetArticleService(c *gin.Context, db *sql.DB) []util.Article {
 	return articles
 }
 
-func GetSingleArticleService(c *gin.Context, db *sql.DB) util.Article {
+func (s Service) GetSingleArticleService(c *gin.Context) util.Article {
 
-	article, rows := dao.GetSingleArticleDao(c, db)
+	article, rows := s.dao.GetSingleArticleDao(c)
 
 	for rows.Next() {
 		imageName := util.ImageName{}
@@ -45,11 +48,11 @@ func GetSingleArticleService(c *gin.Context, db *sql.DB) util.Article {
 	return article
 }
 
-func DeleteArticleService(c *gin.Context, db *sql.DB) {
-	dao.DeleteArticleDao(c, db)
+func (s Service) DeleteArticleService(c *gin.Context) {
+	s.dao.DeleteArticleDao(c)
 }
 
-func PostService(c *gin.Context, db *sql.DB) string {
+func (s Service) PostService(c *gin.Context) string {
 	u, err := uuid.NewRandom()
 	if err != nil {
 		fmt.Println(err)
@@ -57,7 +60,7 @@ func PostService(c *gin.Context, db *sql.DB) string {
 	uu := u.String()
 	var article util.Article
 	c.BindJSON(&article)
-	dao.PostDao(db, article, uu)
+	s.dao.PostDao(article, uu)
 
 	return uu
 }
@@ -66,8 +69,12 @@ func PostImageService(c *gin.Context) []util.ImageName {
 	return dao.PostImageToS3(c)
 }
 
-func PostImageToDBService(c *gin.Context, db *sql.DB) {
+func (s Service) PostImageToDBService(c *gin.Context) {
 	var imageData util.ImageData
 	c.BindJSON(&imageData)
-	dao.PostImageToDBDao(imageData, db)
+	s.dao.PostImageToDBDao(imageData)
+}
+
+func NewService(dao *dao.Dao) *Service {
+	return &Service{dao: dao}
 }

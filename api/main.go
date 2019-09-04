@@ -1,6 +1,8 @@
 package main
 
 import (
+	"article/api/dao"
+	"article/api/service"
 	"database/sql"
 	"os"
 	"time"
@@ -50,6 +52,10 @@ func main() {
 		panic(err)
 	}
 
+	dao := dao.NewDao(db)
+	service := service.NewService(dao)
+	cntlr := controller.NewController(service)
+
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
@@ -67,22 +73,22 @@ func main() {
 	api := router.Group("/api")
 	{
 		api.GET("/articles", func(c *gin.Context) {
-			controller.GetArticleController(c, db)
+			cntlr.GetArticleController(c)
 		})
 		api.GET("/article/:id", func(c *gin.Context) {
-			controller.GetSingleArticleController(c, db)
+			cntlr.GetSingleArticleController(c)
 		})
 		api.GET("/delete/:id", func(c *gin.Context) {
-			controller.DeleteArticleController(c, db)
+			cntlr.DeleteArticleController(c)
 		})
 		api.POST("/post", func(c *gin.Context) {
-			controller.PostController(c, db)
+			cntlr.PostController(c)
 		})
 		api.POST("/post/image", func(c *gin.Context) {
 			controller.PostImageController(c)
 		})
 		api.POST("/post/image/db", func(c *gin.Context) {
-			controller.PostImageToDBController(c, db)
+			cntlr.PostImageToDBController(c)
 		})
 	}
 
