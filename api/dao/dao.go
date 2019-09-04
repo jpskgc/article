@@ -10,8 +10,13 @@ import (
 	"article/api/util"
 )
 
-func GetArticleDao(db *sql.DB) *sql.Rows {
-	results, err := db.Query("SELECT * FROM articles")
+type Dao struct {
+	database *sql.DB
+}
+
+func (d *Dao) GetArticleDao() *sql.Rows {
+
+	results, err := d.database.Query("SELECT * FROM articles")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -19,14 +24,14 @@ func GetArticleDao(db *sql.DB) *sql.Rows {
 	return results
 }
 
-func GetSingleArticleDao(c *gin.Context, db *sql.DB) (util.Article, *sql.Rows) {
+func (d *Dao) GetSingleArticleDao(c *gin.Context) (util.Article, *sql.Rows) {
 	id := c.Params.ByName("id")
 	article := util.Article{}
-	errArticle := db.QueryRow("SELECT * FROM articles WHERE id = ?", id).Scan(&article.ID, &article.UUID, &article.TITLE, &article.CONTENT)
+	errArticle := d.database.QueryRow("SELECT * FROM articles WHERE id = ?", id).Scan(&article.ID, &article.UUID, &article.TITLE, &article.CONTENT)
 	if errArticle != nil {
 		panic(errArticle.Error())
 	}
-	rows, errImage := db.Query("SELECT image_name FROM images WHERE article_uuid  = ?", article.UUID)
+	rows, errImage := d.database.Query("SELECT image_name FROM images WHERE article_uuid  = ?", article.UUID)
 	if errImage != nil {
 		panic(errImage.Error())
 	}
@@ -34,18 +39,18 @@ func GetSingleArticleDao(c *gin.Context, db *sql.DB) (util.Article, *sql.Rows) {
 	return article, rows
 }
 
-func DeleteArticleDao(c *gin.Context, db *sql.DB) {
+func (d *Dao) DeleteArticleDao(c *gin.Context) {
 	id := c.Params.ByName("id")
 
 	article := util.Article{}
-	errArticle := db.QueryRow("SELECT * FROM articles WHERE id = ?", id).Scan(&article.ID, &article.UUID, &article.TITLE, &article.CONTENT)
+	errArticle := d.database.QueryRow("SELECT * FROM articles WHERE id = ?", id).Scan(&article.ID, &article.UUID, &article.TITLE, &article.CONTENT)
 	if errArticle != nil {
 		panic(errArticle.Error())
 	}
 
 	var imageNames []util.ImageName
 
-	rows, errImage := db.Query("SELECT image_name FROM images WHERE article_uuid  = ?", article.UUID)
+	rows, errImage := d.database.Query("SELECT image_name FROM images WHERE article_uuid  = ?", article.UUID)
 	if errImage != nil {
 		panic(errImage.Error())
 	}
@@ -59,7 +64,7 @@ func DeleteArticleDao(c *gin.Context, db *sql.DB) {
 		imageNames = append(imageNames, imageName)
 	}
 
-	tx, err := db.Begin()
+	tx, err := d.database.Begin()
 	if err != nil {
 		fmt.Printf("Failed to begin transaction : %s", err)
 		return
@@ -84,16 +89,16 @@ func DeleteArticleDao(c *gin.Context, db *sql.DB) {
 
 }
 
-func PostDao(db *sql.DB, article util.Article, uu string) {
-	ins, err := db.Prepare("INSERT INTO articles(uuid, title,content) VALUES(?,?,?)")
+func (d *Dao) PostDao(article util.Article, uu string) {
+	ins, err := d.database.Prepare("INSERT INTO articles(uuid, title,content) VALUES(?,?,?)")
 	if err != nil {
 		log.Fatal(err)
 	}
 	ins.Exec(uu, article.TITLE, article.CONTENT)
 }
 
-func PostImageToDBDao(imageData util.ImageData, db *sql.DB) {
-	ins, err := db.Prepare("INSERT INTO images(article_uuid, image_name) VALUES(?,?)")
+func (d *Dao) PostImageToDBDao(imageData util.ImageData) {
+	ins, err := d.database.Prepare("INSERT INTO images(article_uuid, image_name) VALUES(?,?)")
 
 	for _, imageName := range imageData.IMAGENAMES {
 
@@ -102,4 +107,8 @@ func PostImageToDBDao(imageData util.ImageData, db *sql.DB) {
 		}
 		ins.Exec(imageData.ARTICLEUUID, imageName.NAME)
 	}
+}
+
+func NewDao(database *sql.DB) *Dao {
+	return &Dao{database: database}
 }

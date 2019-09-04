@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"database/sql"
 	"net/http"
 
 	"article/api/service"
@@ -9,25 +8,29 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetArticleController(c *gin.Context, db *sql.DB) {
-	articles := service.GetArticleService(c, db)
+type Controller struct {
+	service *service.Service
+}
+
+func (controller Controller) GetArticleController(c *gin.Context) {
+	articles := controller.service.GetArticleService(c)
 	c.JSON(http.StatusOK, articles)
 }
 
-func GetSingleArticleController(c *gin.Context, db *sql.DB) {
-	article := service.GetSingleArticleService(c, db)
+func (controller Controller) GetSingleArticleController(c *gin.Context) {
+	article := controller.service.GetSingleArticleService(c)
 
 	c.JSON(http.StatusOK, article)
 }
 
-func DeleteArticleController(c *gin.Context, db *sql.DB) {
-	service.DeleteArticleService(c, db)
+func (controller Controller) DeleteArticleController(c *gin.Context) {
+	controller.service.DeleteArticleService(c)
 
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }
 
-func PostController(c *gin.Context, db *sql.DB) {
-	uu := service.PostService(c, db)
+func (controller Controller) PostController(c *gin.Context) {
+	uu := controller.service.PostService(c)
 
 	c.JSON(http.StatusOK, gin.H{"uuid": uu})
 }
@@ -39,7 +42,11 @@ func PostImageController(c *gin.Context) {
 	c.JSON(http.StatusOK, imageNames)
 }
 
-func PostImageToDBController(c *gin.Context, db *sql.DB) {
-	service.PostImageToDBService(c, db)
+func (controller Controller) PostImageToDBController(c *gin.Context) {
+	controller.service.PostImageToDBService(c)
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+}
+
+func NewController(service *service.Service) *Controller {
+	return &Controller{service: service}
 }
