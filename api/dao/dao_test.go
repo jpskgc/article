@@ -2,33 +2,42 @@ package dao
 
 import (
 	"article/api/util"
+	"database/sql"
 	"net/http"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 
 	"github.com/gin-gonic/gin"
 )
 
-func TestGetArticleDao(t *testing.T) {
+type DaoSuite struct {
+	suite.Suite
+	db   *sql.DB
+	mock sqlmock.Sqlmock
+	dao  *Dao
+}
 
-	db, mock, err := sqlmock.New()
+func (s *DaoSuite) SetupTest() {
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
+	var err error
+	s.db, s.mock, err = sqlmock.New()
+	s.Require().NoError(err)
+	s.dao = NewDao(s.db)
+}
 
-	defer db.Close()
+func (s *DaoSuite) TestGetArticleDao() {
 
-	rows := sqlmock.NewRows([]string{"id", "uuid", "title", "content"}).
+	rows := s.mock.NewRows([]string{"id", "uuid", "title", "content"}).
 		AddRow(1, "bea1b24d-0627-4ea0-aa2b-8af4c6c2a41c", "test", "test").
 		AddRow(2, "844bc620-7336-41a3-9cb4-552a0024ff1c", "test2", "test2")
 
-	mock.ExpectQuery("^SELECT (.+) FROM articles*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM articles*").
 		WillReturnRows(rows)
 
-	results := GetArticleDao(db)
+	results := s.dao.GetArticleDao()
 	var articles []util.Article
 	article := util.Article{}
 	for results.Next() {
@@ -58,30 +67,23 @@ func TestGetArticleDao(t *testing.T) {
 	}
 	expectedArticles = append(expectedArticles, expectedArticle2)
 
-	assert.Equal(t, expectedArticles, articles)
+	assert.Equal(s.T(), expectedArticles, articles)
 }
 
-func TestGetSingleArticleDao(t *testing.T) {
-	db, mock, err := sqlmock.New()
+func (s *DaoSuite) TestGetSingleArticleDao() {
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-
-	defer db.Close()
-
-	articleMockRows := sqlmock.NewRows([]string{"id", "uuid", "title", "content"}).
+	articleMockRows := s.mock.NewRows([]string{"id", "uuid", "title", "content"}).
 		AddRow(1, "bea1b24d-0627-4ea0-aa2b-8af4c6c2a41c", "test", "test")
 
-	mock.ExpectQuery("^SELECT (.+) FROM articles*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM articles*").
 		WithArgs("1").
 		WillReturnRows(articleMockRows)
 
-	imageMockRows := sqlmock.NewRows([]string{"image_name"}).
+	imageMockRows := s.mock.NewRows([]string{"image_name"}).
 		AddRow("1a90696f-4fe7-48f5-81a5-ca72c129f4b0").
 		AddRow("3d997272-468f-4b66-91db-00c39f0ef717")
 
-	mock.ExpectQuery("^SELECT (.+) FROM images*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM images*").
 		WithArgs("bea1b24d-0627-4ea0-aa2b-8af4c6c2a41c").
 		WillReturnRows(imageMockRows)
 
@@ -91,7 +93,7 @@ func TestGetSingleArticleDao(t *testing.T) {
 	var context *gin.Context
 	context = &gin.Context{Request: req, Params: params}
 
-	article, imageRows := GetSingleArticleDao(context, db)
+	article, imageRows := s.dao.GetSingleArticleDao(context)
 
 	for imageRows.Next() {
 		imageName := util.ImageName{}
@@ -120,20 +122,34 @@ func TestGetSingleArticleDao(t *testing.T) {
 
 	expectedArticle.IMAGENAMES = append(expectedArticle.IMAGENAMES, imageName2)
 
-	assert.Equal(t, expectedArticle, article)
+	assert.Equal(s.T(), expectedArticle, article)
 }
 
-func TestDeleteArticleDao(t *testing.T) {
-	db, mock, err := sqlmock.New()
+func (s *DaoSuite) TestDeleteArticleDao() {
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
+	articleMockRows := s.mock.NewRows([]string{"id", "uuid", "title", "content"}).
+		AddRow(1, "bea1b24d-0627-4ea0-aa2b-8af4c6c2a41c", "test", "test")
 
-	defer db.Close()
+	s.mock.ExpectQuery("^SELECT (.+) FROM articles*").
+		WithArgs("1").
+		WillReturnRows(articleMockRows)
 
-	mock.ExpectExec("^DELETE FROM articles*").WithArgs("1").
+	imageMockRows := s.mock.NewRows([]string{"image_name"}).
+		AddRow("1a90696f-4fe7-48f5-81a5-ca72c129f4b0")
+
+	s.mock.ExpectQuery("^SELECT (.+) FROM images*").
+		WithArgs("bea1b24d-0627-4ea0-aa2b-8af4c6c2a41c").
+		WillReturnRows(imageMockRows)
+
+	s.mock.ExpectBegin()
+
+	s.mock.ExpectExec("^DELETE FROM articles*").WithArgs("1").
 		WillReturnResult(sqlmock.NewErrorResult(nil))
+
+	s.mock.ExpectExec("^DELETE FROM images*").WithArgs("bea1b24d-0627-4ea0-aa2b-8af4c6c2a41c").
+		WillReturnResult(sqlmock.NewErrorResult(nil))
+
+	s.mock.ExpectCommit()
 
 	param := gin.Param{"id", "1"}
 	params := gin.Params{param}
@@ -141,23 +157,16 @@ func TestDeleteArticleDao(t *testing.T) {
 	var context *gin.Context
 	context = &gin.Context{Request: req, Params: params}
 
-	DeleteArticleDao(context, db)
+	s.dao.DeleteArticleDao(context)
 
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expections: %s", err)
+	if err := s.mock.ExpectationsWereMet(); err != nil {
+		s.T().Errorf("there were unfulfilled expections: %s", err)
 	}
 }
 
-func TestPostDao(t *testing.T) {
-	db, mock, err := sqlmock.New()
+func (s *DaoSuite) TestPostDao() {
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-
-	defer db.Close()
-
-	prep := mock.ExpectPrepare("^INSERT INTO articles*")
+	prep := s.mock.ExpectPrepare("^INSERT INTO articles*")
 
 	prep.ExpectExec().
 		WithArgs("bea1b24d-0627-4ea0-aa2b-8af4c6c2a41c", "test", "test").
@@ -169,23 +178,16 @@ func TestPostDao(t *testing.T) {
 		CONTENT: "test",
 	}
 
-	PostDao(db, article, "bea1b24d-0627-4ea0-aa2b-8af4c6c2a41c")
+	s.dao.PostDao(article, "bea1b24d-0627-4ea0-aa2b-8af4c6c2a41c")
 
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expections: %s", err)
+	if err := s.mock.ExpectationsWereMet(); err != nil {
+		s.T().Errorf("there were unfulfilled expections: %s", err)
 	}
 }
 
-func TestPostImageToDBDao(t *testing.T) {
-	db, mock, err := sqlmock.New()
+func (s *DaoSuite) TestPostImageToDBDao() {
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-
-	defer db.Close()
-
-	prep := mock.ExpectPrepare("^INSERT INTO images*")
+	prep := s.mock.ExpectPrepare("^INSERT INTO images*")
 
 	prep.ExpectExec().
 		WithArgs("bea1b24d-0627-4ea0-aa2b-8af4c6c2a41c", "b8119536-fad5-4ffa-ab71-2f96cca19697").
@@ -211,9 +213,18 @@ func TestPostImageToDBDao(t *testing.T) {
 
 	expectedImageData.IMAGENAMES = expectedImageName
 
-	PostImageToDBDao(expectedImageData, db)
+	s.dao.PostImageToDBDao(expectedImageData)
 
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expections: %s", err)
+	if err := s.mock.ExpectationsWereMet(); err != nil {
+		s.T().Errorf("there were unfulfilled expections: %s", err)
 	}
+}
+
+func (s *DaoSuite) TearDownTest() {
+	s.db.Close()
+	s.Assert().NoError(s.mock.ExpectationsWereMet())
+}
+
+func TestDaoSuite(t *testing.T) {
+	suite.Run(t, new(DaoSuite))
 }
