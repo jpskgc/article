@@ -17,6 +17,16 @@ type Dao struct {
 	s3       *s3.S3
 }
 
+func NewDao(database *sql.DB, s3 *s3.S3) *Dao {
+	objs := &Dao{database: database, s3: s3}
+	return objs
+}
+
+type S3Interface interface {
+	PostImageToS3(file *multipart.FileHeader, imageName string) error
+	DeleteS3Image(imageName util.ImageName) error
+}
+
 func (d *Dao) GetArticleDao() *sql.Rows {
 
 	results, err := d.database.Query("SELECT * FROM articles")
@@ -109,9 +119,4 @@ func (d *Dao) PostImageToDBDao(imageData util.ImageData) {
 
 func (d *Dao) PostImageToS3Dao(file *multipart.FileHeader, imageName string) {
 	d.s3.PostImageToS3(file, imageName)
-}
-
-func NewDao(database *sql.DB, s3 *s3.S3) *Dao {
-	objs := &Dao{database: database, s3: s3}
-	return objs
 }

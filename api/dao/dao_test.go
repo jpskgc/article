@@ -9,7 +9,6 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/gin-gonic/gin"
@@ -21,13 +20,6 @@ type DaoSuite struct {
 	mock sqlmock.Sqlmock
 	dao  *Dao
 	s3   *s3.S3
-}
-
-type MockDaoInterface struct {
-	mock.Mock
-}
-
-func (_m *MockDaoInterface) DeleteS3Image(imageNames []util.ImageName) {
 }
 
 func (s *DaoSuite) SetupTest() {
@@ -161,13 +153,13 @@ func (s *DaoSuite) TestDeleteArticleDao() {
 
 	s.mock.ExpectCommit()
 
-	param := gin.Param{"id", "1"}
-	params := gin.Params{param}
-	req, _ := http.NewRequest("GET", "/delete/1", nil)
-	var context *gin.Context
-	context = &gin.Context{Request: req, Params: params}
+	// param := gin.Param{"id", "1"}
+	// params := gin.Params{param}
+	// req, _ := http.NewRequest("GET", "/delete/1", nil)
+	// var context *gin.Context
+	// context = &gin.Context{Request: req, Params: params}
 
-	s.dao.DeleteArticleDao(context)
+	s.dao.DeleteArticleDao("1")
 
 	if err := s.mock.ExpectationsWereMet(); err != nil {
 		s.T().Errorf("there were unfulfilled expections: %s", err)
