@@ -7,11 +7,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"article/api/s3"
 	"article/api/util"
 )
 
 type Dao struct {
 	database *sql.DB
+	s3       *s3.S3
 }
 
 func (d *Dao) GetArticleDao() *sql.Rows {
@@ -85,7 +87,7 @@ func (d *Dao) DeleteArticleDao(c *gin.Context) {
 		return
 	}
 	tx.Commit()
-	DeleteS3Image(imageNames)
+	d.s3.DeleteS3Image(imageNames)
 
 }
 
@@ -109,6 +111,11 @@ func (d *Dao) PostImageToDBDao(imageData util.ImageData) {
 	}
 }
 
-func NewDao(database *sql.DB) *Dao {
-	return &Dao{database: database}
+func (d *Dao) PostImageToS3Dao(c *gin.Context) []util.ImageName {
+	return d.s3.PostImageToS3(c)
+}
+
+func NewDao(database *sql.DB, s3 *s3.S3) *Dao {
+	objs := &Dao{database: database, s3: s3}
+	return objs
 }

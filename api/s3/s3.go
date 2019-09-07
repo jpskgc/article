@@ -1,4 +1,4 @@
-package dao
+package s3
 
 import (
 	"article/api/util"
@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -18,8 +17,23 @@ import (
 	"github.com/google/uuid"
 )
 
-func PostImageToS3(c *gin.Context) []util.ImageName {
-	creds := credentials.NewStaticCredentials(os.Getenv("AWS_ACCESS_KEY_ID"), os.Getenv("AWS_SECRET_ACCESS_KEY"), "")
+type S3 struct {
+	APPID  string
+	SECRET string
+}
+
+type DaoInterface interface {
+	PostImageToS3(c *gin.Context) []util.ImageName
+	DeleteS3Image(imageNames []util.ImageName)
+}
+
+func NewS3(appid, secret string) *S3 {
+	objs := &S3{APPID: appid, SECRET: secret}
+	return objs
+}
+
+func (objs *S3) PostImageToS3(c *gin.Context) []util.ImageName {
+	creds := credentials.NewStaticCredentials(objs.APPID, objs.SECRET, "")
 
 	cfg := aws.NewConfig().WithRegion("ap-northeast-1").WithCredentials(creds)
 	svc := s3.New(session.New(), cfg)
@@ -73,9 +87,9 @@ func PostImageToS3(c *gin.Context) []util.ImageName {
 	return imageNames
 }
 
-func DeleteS3Image(imageNames []util.ImageName) {
+func (objs *S3) DeleteS3Image(imageNames []util.ImageName) {
 
-	creds := credentials.NewStaticCredentials(os.Getenv("AWS_ACCESS_KEY_ID"), os.Getenv("AWS_SECRET_ACCESS_KEY"), "")
+	creds := credentials.NewStaticCredentials(objs.APPID, objs.SECRET, "")
 
 	cfg := aws.NewConfig().WithRegion("ap-northeast-1").WithCredentials(creds)
 	svc := s3.New(session.New(), cfg)

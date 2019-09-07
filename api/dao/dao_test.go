@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"article/api/s3"
 	"article/api/util"
 	"database/sql"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/gin-gonic/gin"
@@ -18,6 +20,14 @@ type DaoSuite struct {
 	db   *sql.DB
 	mock sqlmock.Sqlmock
 	dao  *Dao
+	s3   *s3.S3
+}
+
+type MockDaoInterface struct {
+	mock.Mock
+}
+
+func (_m *MockDaoInterface) DeleteS3Image(imageNames []util.ImageName) {
 }
 
 func (s *DaoSuite) SetupTest() {
@@ -25,7 +35,7 @@ func (s *DaoSuite) SetupTest() {
 	var err error
 	s.db, s.mock, err = sqlmock.New()
 	s.Require().NoError(err)
-	s.dao = NewDao(s.db)
+	s.dao = NewDao(s.db, s.s3)
 }
 
 func (s *DaoSuite) TestGetArticleDao() {
