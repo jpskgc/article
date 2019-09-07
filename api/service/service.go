@@ -49,7 +49,8 @@ func (s Service) GetSingleArticleService(c *gin.Context) util.Article {
 }
 
 func (s Service) DeleteArticleService(c *gin.Context) {
-	s.dao.DeleteArticleDao(c)
+	id := c.Params.ByName("id")
+	s.dao.DeleteArticleDao(id)
 }
 
 func (s Service) PostService(c *gin.Context) string {
@@ -66,7 +67,29 @@ func (s Service) PostService(c *gin.Context) string {
 }
 
 func (s Service) PostImageService(c *gin.Context) []util.ImageName {
-	return s.dao.PostImageToS3Dao(c)
+
+	form, _ := c.MultipartForm()
+	files := form.File["images[]"]
+
+	var imageNames []util.ImageName
+	imageName := util.ImageName{}
+
+	for _, file := range files {
+
+		u, err := uuid.NewRandom()
+		if err != nil {
+			fmt.Println(err)
+		}
+		uu := u.String()
+
+		s.dao.PostImageToS3Dao(file, uu)
+
+		imageName.NAME = uu
+
+		imageNames = append(imageNames, imageName)
+	}
+
+	return imageNames
 }
 
 func (s Service) PostImageToDBService(c *gin.Context) {
