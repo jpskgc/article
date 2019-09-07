@@ -65,8 +65,8 @@ func (s Service) PostService(c *gin.Context) string {
 	return uu
 }
 
-func PostImageService(c *gin.Context) []util.ImageName {
-	return dao.PostImageToS3(c)
+func (s Service) PostImageService(c *gin.Context) []util.ImageName {
+	return s.dao.PostImageToS3Dao(c)
 }
 
 func (s Service) PostImageToDBService(c *gin.Context) {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"article/api/dao"
+	"article/api/s3"
 	"article/api/service"
 	"database/sql"
 	"os"
@@ -52,7 +53,8 @@ func main() {
 		panic(err)
 	}
 
-	dao := dao.NewDao(db)
+	s3 := s3.NewS3(os.Getenv("AWS_ACCESS_KEY_ID"), os.Getenv("AWS_SECRET_ACCESS_KEY"))
+	dao := dao.NewDao(db, s3)
 	service := service.NewService(dao)
 	cntlr := controller.NewController(service)
 
@@ -85,7 +87,7 @@ func main() {
 			cntlr.PostController(c)
 		})
 		api.POST("/post/image", func(c *gin.Context) {
-			controller.PostImageController(c)
+			cntlr.PostImageController(c)
 		})
 		api.POST("/post/image/db", func(c *gin.Context) {
 			cntlr.PostImageToDBController(c)

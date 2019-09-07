@@ -35,9 +35,9 @@ func (controller Controller) PostController(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"uuid": uu})
 }
 
-func PostImageController(c *gin.Context) {
+func (controller Controller) PostImageController(c *gin.Context) {
 
-	imageNames := service.PostImageService(c)
+	imageNames := controller.service.PostImageService(c)
 
 	c.JSON(http.StatusOK, imageNames)
 }
