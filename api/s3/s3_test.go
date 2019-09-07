@@ -1,7 +1,9 @@
 package s3
 
 import (
+	"article/api/util"
 	"bytes"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
@@ -9,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,8 +44,20 @@ func TestPostImageToS3(t *testing.T) {
 	c.Request, _ = http.NewRequest("POST", "/", buf)
 	c.Request.Header.Set("Content-Type", mw.FormDataContentType())
 
-	objectStore.PostImageToS3(c)
+	form, _ := c.MultipartForm()
+	files := form.File["test"]
 
+	for _, file := range files {
+		u, err := uuid.NewRandom()
+		if err != nil {
+			fmt.Println(err)
+		}
+		uu := u.String()
+		err = objectStore.PostImageToS3(file, uu)
+		if err != nil {
+			t.Fatalf("PostImageToS3 error %s", err)
+		}
+	}
 }
 
 func TestDeleteS3Image(t *testing.T) {
@@ -60,8 +75,27 @@ func TestDeleteS3Image(t *testing.T) {
 	c.Request, _ = http.NewRequest("POST", "/", buf)
 	c.Request.Header.Set("Content-Type", mw.FormDataContentType())
 
-	imageNames := objectStore.PostImageToS3(c)
+	form, _ := c.MultipartForm()
+	files := form.File["test"]
 
-	objectStore.DeleteS3Image(imageNames)
+	for _, file := range files {
+		u, err := uuid.NewRandom()
+		if err != nil {
+			fmt.Println(err)
+		}
+		uu := u.String()
+		err = objectStore.PostImageToS3(file, uu)
+		if err != nil {
+			t.Fatalf("PostImageToS3 error %s", err)
+		}
+
+		expectedImageName := util.ImageName{
+			NAME: uu,
+		}
+		err = objectStore.DeleteS3Image(expectedImageName)
+		if err != nil {
+			t.Fatalf("DeleteS3Image error %s", err)
+		}
+	}
 
 }

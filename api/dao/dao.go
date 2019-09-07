@@ -43,15 +43,12 @@ func (d *Dao) GetSingleArticleDao(c *gin.Context) (util.Article, *sql.Rows) {
 }
 
 func (d *Dao) DeleteArticleDao(id string) {
-	//id := c.Params.ByName("id")
 
 	article := util.Article{}
 	errArticle := d.database.QueryRow("SELECT * FROM articles WHERE id = ?", id).Scan(&article.ID, &article.UUID, &article.TITLE, &article.CONTENT)
 	if errArticle != nil {
 		panic(errArticle.Error())
 	}
-
-	//var imageNames []util.ImageName
 
 	rows, errImage := d.database.Query("SELECT image_name FROM images WHERE article_uuid  = ?", article.UUID)
 	if errImage != nil {
@@ -64,7 +61,6 @@ func (d *Dao) DeleteArticleDao(id string) {
 		if err != nil {
 			panic(err.Error())
 		}
-		//imageNames = append(imageNames, imageName)
 		d.s3.DeleteS3Image(imageName)
 	}
 
@@ -89,9 +85,6 @@ func (d *Dao) DeleteArticleDao(id string) {
 		return
 	}
 	tx.Commit()
-
-	//d.s3.DeleteS3Image(imageNames)
-
 }
 
 func (d *Dao) PostDao(article util.Article, uu string) {
