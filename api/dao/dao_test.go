@@ -153,12 +153,6 @@ func (s *DaoSuite) TestDeleteArticleDao() {
 
 	s.mock.ExpectCommit()
 
-	// param := gin.Param{"id", "1"}
-	// params := gin.Params{param}
-	// req, _ := http.NewRequest("GET", "/delete/1", nil)
-	// var context *gin.Context
-	// context = &gin.Context{Request: req, Params: params}
-
 	s.dao.DeleteArticleDao("1")
 
 	if err := s.mock.ExpectationsWereMet(); err != nil {
