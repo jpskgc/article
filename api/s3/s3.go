@@ -14,7 +14,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/gin-gonic/gin"
 )
 
 type S3 struct {
@@ -23,8 +22,8 @@ type S3 struct {
 }
 
 type DaoInterface interface {
-	PostImageToS3(c *gin.Context) []util.ImageName
-	DeleteS3Image(imageNames []util.ImageName)
+	PostImageToS3(file *multipart.FileHeader, imageName string) error
+	DeleteS3Image(imageName util.ImageName) error
 }
 
 func NewS3(appid, secret string) *S3 {
@@ -38,15 +37,6 @@ func (objs *S3) PostImageToS3(file *multipart.FileHeader, imageName string) erro
 	cfg := aws.NewConfig().WithRegion("ap-northeast-1").WithCredentials(creds)
 	svc := s3.New(session.New(), cfg)
 
-	// form, _ := c.MultipartForm()
-
-	// files := form.File["images[]"]
-
-	// var imageNames []util.ImageName
-	// imageName := util.ImageName{}
-
-	// for _, file := range files {
-
 	f, err := file.Open()
 
 	if err != nil {
@@ -57,12 +47,6 @@ func (objs *S3) PostImageToS3(file *multipart.FileHeader, imageName string) erro
 
 	size := file.Size
 	buffer := make([]byte, size)
-
-	// u, err := uuid.NewRandom()
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// uu := u.String()
 
 	f.Read(buffer)
 	fileBytes := bytes.NewReader(buffer)
@@ -79,11 +63,6 @@ func (objs *S3) PostImageToS3(file *multipart.FileHeader, imageName string) erro
 
 	fmt.Printf("response %s", awsutil.StringValue(resp))
 
-	//imageName.NAME = uu
-
-	//imageNames = append(imageNames, imageName)
-	// }
-
 	return err
 }
 
@@ -93,8 +72,6 @@ func (objs *S3) DeleteS3Image(imageName util.ImageName) error {
 
 	cfg := aws.NewConfig().WithRegion("ap-northeast-1").WithCredentials(creds)
 	svc := s3.New(session.New(), cfg)
-
-	// for _, imageName := range imageNames {
 
 	path := "/media/" + imageName.NAME
 
@@ -118,5 +95,4 @@ func (objs *S3) DeleteS3Image(imageName util.ImageName) error {
 
 	fmt.Println(result)
 	return err
-	// }
 }
