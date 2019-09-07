@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"mime/multipart"
 
 	"github.com/gin-gonic/gin"
 
@@ -41,8 +42,8 @@ func (d *Dao) GetSingleArticleDao(c *gin.Context) (util.Article, *sql.Rows) {
 	return article, rows
 }
 
-func (d *Dao) DeleteArticleDao(c *gin.Context) {
-	id := c.Params.ByName("id")
+func (d *Dao) DeleteArticleDao(id string) {
+	//id := c.Params.ByName("id")
 
 	article := util.Article{}
 	errArticle := d.database.QueryRow("SELECT * FROM articles WHERE id = ?", id).Scan(&article.ID, &article.UUID, &article.TITLE, &article.CONTENT)
@@ -50,7 +51,7 @@ func (d *Dao) DeleteArticleDao(c *gin.Context) {
 		panic(errArticle.Error())
 	}
 
-	var imageNames []util.ImageName
+	//var imageNames []util.ImageName
 
 	rows, errImage := d.database.Query("SELECT image_name FROM images WHERE article_uuid  = ?", article.UUID)
 	if errImage != nil {
@@ -63,7 +64,8 @@ func (d *Dao) DeleteArticleDao(c *gin.Context) {
 		if err != nil {
 			panic(err.Error())
 		}
-		imageNames = append(imageNames, imageName)
+		//imageNames = append(imageNames, imageName)
+		d.s3.DeleteS3Image(imageName)
 	}
 
 	tx, err := d.database.Begin()
@@ -87,7 +89,8 @@ func (d *Dao) DeleteArticleDao(c *gin.Context) {
 		return
 	}
 	tx.Commit()
-	d.s3.DeleteS3Image(imageNames)
+
+	//d.s3.DeleteS3Image(imageNames)
 
 }
 
@@ -111,8 +114,8 @@ func (d *Dao) PostImageToDBDao(imageData util.ImageData) {
 	}
 }
 
-func (d *Dao) PostImageToS3Dao(c *gin.Context) []util.ImageName {
-	return d.s3.PostImageToS3(c)
+func (d *Dao) PostImageToS3Dao(file *multipart.FileHeader, imageName string) {
+	d.s3.PostImageToS3(file, imageName)
 }
 
 func NewDao(database *sql.DB, s3 *s3.S3) *Dao {
