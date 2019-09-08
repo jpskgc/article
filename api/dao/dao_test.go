@@ -19,7 +19,6 @@ type MockDaoInterface struct {
 }
 
 func (_m *MockDaoInterface) PostImageToS3(file *multipart.FileHeader, imageName string) error {
-	// do whatever
 	return nil
 }
 
