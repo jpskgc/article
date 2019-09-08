@@ -21,14 +21,14 @@ type S3 struct {
 	SECRET string
 }
 
-type DaoInterface interface {
-	PostImageToS3(file *multipart.FileHeader, imageName string) error
-	DeleteS3Image(imageName util.ImageName) error
-}
-
 func NewS3(appid, secret string) *S3 {
 	objs := &S3{APPID: appid, SECRET: secret}
 	return objs
+}
+
+type DaoInterface interface {
+	PostImageToS3(file *multipart.FileHeader, imageName string) error
+	DeleteS3Image(imageName util.ImageName) error
 }
 
 func (objs *S3) PostImageToS3(file *multipart.FileHeader, imageName string) error {
