@@ -26,6 +26,11 @@ func NewS3(appid, secret string) *S3 {
 	return objs
 }
 
+type DaoInterface interface {
+	PostImageToS3(file *multipart.FileHeader, imageName string) error
+	DeleteS3Image(imageName util.ImageName) error
+}
+
 func (objs *S3) PostImageToS3(file *multipart.FileHeader, imageName string) error {
 	creds := credentials.NewStaticCredentials(objs.APPID, objs.SECRET, "")
 

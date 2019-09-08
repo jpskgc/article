@@ -11,15 +11,26 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
+	"github.com/stretchr/testify/mock"
+
 	"github.com/gin-gonic/gin"
 )
+
+type MockDaoInterface struct {
+	mock.Mock
+}
+
+func (_m *MockDaoInterface) DeleteS3Image(imageName util.ImageName) error {
+	// do whatever
+	return nil
+}
 
 type DaoSuite struct {
 	suite.Suite
 	db   *sql.DB
 	mock sqlmock.Sqlmock
+	s3   s3.DaoInterface
 	dao  *Dao
-	s3   *s3.S3
 }
 
 func (s *DaoSuite) SetupTest() {
@@ -28,6 +39,7 @@ func (s *DaoSuite) SetupTest() {
 	s.db, s.mock, err = sqlmock.New()
 	s.Require().NoError(err)
 	s.dao = NewDao(s.db, s.s3)
+	s.dao.s3 = MockDaoInterface{}
 }
 
 func (s *DaoSuite) TestGetArticleDao() {
