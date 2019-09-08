@@ -4,6 +4,7 @@ import (
 	"article/api/s3"
 	"article/api/util"
 	"database/sql"
+	"mime/multipart"
 	"net/http"
 	"testing"
 
@@ -11,17 +12,18 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/stretchr/testify/mock"
-
 	"github.com/gin-gonic/gin"
 )
 
 type MockDaoInterface struct {
-	mock.Mock
+}
+
+func (_m *MockDaoInterface) PostImageToS3(file *multipart.FileHeader, imageName string) error {
+	// do whatever
+	return nil
 }
 
 func (_m *MockDaoInterface) DeleteS3Image(imageName util.ImageName) error {
-	// do whatever
 	return nil
 }
 
@@ -39,7 +41,7 @@ func (s *DaoSuite) SetupTest() {
 	s.db, s.mock, err = sqlmock.New()
 	s.Require().NoError(err)
 	s.dao = NewDao(s.db, s.s3)
-	s.dao.s3 = MockDaoInterface{}
+	s.dao.s3 = &MockDaoInterface{}
 }
 
 func (s *DaoSuite) TestGetArticleDao() {
