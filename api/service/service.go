@@ -12,10 +12,14 @@ import (
 )
 
 type Service struct {
-	dao *dao.Dao
+	dao dao.DaoInterface
 }
 
-func (s Service) GetArticleService(c *gin.Context) []util.Article {
+func NewService(dao dao.DaoInterface) *Service {
+	return &Service{dao: dao}
+}
+
+func (s Service) GetArticleService() []util.Article {
 	var articles []util.Article
 
 	results := s.dao.GetArticleDao()
@@ -96,8 +100,4 @@ func (s Service) PostImageToDBService(c *gin.Context) {
 	var imageData util.ImageData
 	c.BindJSON(&imageData)
 	s.dao.PostImageToDBDao(imageData)
-}
-
-func NewService(dao *dao.Dao) *Service {
-	return &Service{dao: dao}
 }

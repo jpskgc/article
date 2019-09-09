@@ -14,12 +14,21 @@ import (
 
 type Dao struct {
 	database *sql.DB
-	s3       s3.DaoInterface
+	s3       s3.S3Interface
 }
 
-func NewDao(database *sql.DB, s3 s3.DaoInterface) *Dao {
+func NewDao(database *sql.DB, s3 s3.S3Interface) *Dao {
 	objs := &Dao{database: database, s3: s3}
 	return objs
+}
+
+type DaoInterface interface {
+	GetArticleDao() *sql.Rows
+	GetSingleArticleDao(c *gin.Context) (util.Article, *sql.Rows)
+	DeleteArticleDao(id string)
+	PostDao(article util.Article, uu string)
+	PostImageToDBDao(imageData util.ImageData)
+	PostImageToS3Dao(file *multipart.FileHeader, imageName string)
 }
 
 func (d *Dao) GetArticleDao() *sql.Rows {

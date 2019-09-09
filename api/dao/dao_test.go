@@ -15,14 +15,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type MockDaoInterface struct {
+type MockS3Interface struct {
 }
 
-func (_m *MockDaoInterface) PostImageToS3(file *multipart.FileHeader, imageName string) error {
+func (_m *MockS3Interface) PostImageToS3(file *multipart.FileHeader, imageName string) error {
 	return nil
 }
 
-func (_m *MockDaoInterface) DeleteS3Image(imageName util.ImageName) error {
+func (_m *MockS3Interface) DeleteS3Image(imageName util.ImageName) error {
 	return nil
 }
 
@@ -30,7 +30,7 @@ type DaoSuite struct {
 	suite.Suite
 	db   *sql.DB
 	mock sqlmock.Sqlmock
-	s3   s3.DaoInterface
+	s3   s3.S3Interface
 	dao  *Dao
 }
 
@@ -40,7 +40,7 @@ func (s *DaoSuite) SetupTest() {
 	s.db, s.mock, err = sqlmock.New()
 	s.Require().NoError(err)
 	s.dao = NewDao(s.db, s.s3)
-	s.dao.s3 = &MockDaoInterface{}
+	s.dao.s3 = &MockS3Interface{}
 }
 
 func (s *DaoSuite) TestGetArticleDao() {
