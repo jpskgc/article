@@ -37,8 +37,8 @@ func (s Service) GetArticleService() []util.Article {
 }
 
 func (s Service) GetSingleArticleService(c *gin.Context) util.Article {
-
-	article, rows := s.dao.GetSingleArticleDao(c)
+	id := c.Params.ByName("id")
+	article, rows := s.dao.GetSingleArticleDao(id)
 
 	for rows.Next() {
 		imageName := util.ImageName{}

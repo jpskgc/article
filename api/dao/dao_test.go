@@ -5,14 +5,11 @@ import (
 	"article/api/util"
 	"database/sql"
 	"mime/multipart"
-	"net/http"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-
-	"github.com/gin-gonic/gin"
 )
 
 type MockS3Interface struct {
@@ -102,13 +99,7 @@ func (s *DaoSuite) TestGetSingleArticleDao() {
 		WithArgs("bea1b24d-0627-4ea0-aa2b-8af4c6c2a41c").
 		WillReturnRows(imageMockRows)
 
-	param := gin.Param{"id", "1"}
-	params := gin.Params{param}
-	req, _ := http.NewRequest("GET", "/article/1", nil)
-	var context *gin.Context
-	context = &gin.Context{Request: req, Params: params}
-
-	article, imageRows := s.dao.GetSingleArticleDao(context)
+	article, imageRows := s.dao.GetSingleArticleDao("1")
 
 	for imageRows.Next() {
 		imageName := util.ImageName{}

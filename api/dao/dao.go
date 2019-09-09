@@ -6,8 +6,6 @@ import (
 	"log"
 	"mime/multipart"
 
-	"github.com/gin-gonic/gin"
-
 	"article/api/s3"
 	"article/api/util"
 )
@@ -24,7 +22,7 @@ func NewDao(database *sql.DB, s3 s3.S3Interface) *Dao {
 
 type DaoInterface interface {
 	GetArticleDao() *sql.Rows
-	GetSingleArticleDao(c *gin.Context) (util.Article, *sql.Rows)
+	GetSingleArticleDao(id string) (util.Article, *sql.Rows)
 	DeleteArticleDao(id string)
 	PostDao(article util.Article, uu string)
 	PostImageToDBDao(imageData util.ImageData)
@@ -41,8 +39,7 @@ func (d *Dao) GetArticleDao() *sql.Rows {
 	return results
 }
 
-func (d *Dao) GetSingleArticleDao(c *gin.Context) (util.Article, *sql.Rows) {
-	id := c.Params.ByName("id")
+func (d *Dao) GetSingleArticleDao(id string) (util.Article, *sql.Rows) {
 	article := util.Article{}
 	errArticle := d.database.QueryRow("SELECT * FROM articles WHERE id = ?", id).Scan(&article.ID, &article.UUID, &article.TITLE, &article.CONTENT)
 	if errArticle != nil {
