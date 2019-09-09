@@ -26,7 +26,7 @@ func NewS3(appid, secret string) *S3 {
 	return objs
 }
 
-type DaoInterface interface {
+type S3Interface interface {
 	PostImageToS3(file *multipart.FileHeader, imageName string) error
 	DeleteS3Image(imageName util.ImageName) error
 }

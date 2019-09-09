@@ -5,24 +5,21 @@ import (
 	"article/api/util"
 	"database/sql"
 	"mime/multipart"
-	"net/http"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-
-	"github.com/gin-gonic/gin"
 )
 
-type MockDaoInterface struct {
+type MockS3Interface struct {
 }
 
-func (_m *MockDaoInterface) PostImageToS3(file *multipart.FileHeader, imageName string) error {
+func (_m *MockS3Interface) PostImageToS3(file *multipart.FileHeader, imageName string) error {
 	return nil
 }
 
-func (_m *MockDaoInterface) DeleteS3Image(imageName util.ImageName) error {
+func (_m *MockS3Interface) DeleteS3Image(imageName util.ImageName) error {
 	return nil
 }
 
@@ -30,7 +27,7 @@ type DaoSuite struct {
 	suite.Suite
 	db   *sql.DB
 	mock sqlmock.Sqlmock
-	s3   s3.DaoInterface
+	s3   s3.S3Interface
 	dao  *Dao
 }
 
@@ -40,7 +37,7 @@ func (s *DaoSuite) SetupTest() {
 	s.db, s.mock, err = sqlmock.New()
 	s.Require().NoError(err)
 	s.dao = NewDao(s.db, s.s3)
-	s.dao.s3 = &MockDaoInterface{}
+	s.dao.s3 = &MockS3Interface{}
 }
 
 func (s *DaoSuite) TestGetArticleDao() {
@@ -102,13 +99,7 @@ func (s *DaoSuite) TestGetSingleArticleDao() {
 		WithArgs("bea1b24d-0627-4ea0-aa2b-8af4c6c2a41c").
 		WillReturnRows(imageMockRows)
 
-	param := gin.Param{"id", "1"}
-	params := gin.Params{param}
-	req, _ := http.NewRequest("GET", "/article/1", nil)
-	var context *gin.Context
-	context = &gin.Context{Request: req, Params: params}
-
-	article, imageRows := s.dao.GetSingleArticleDao(context)
+	article, imageRows := s.dao.GetSingleArticleDao("1")
 
 	for imageRows.Next() {
 		imageName := util.ImageName{}

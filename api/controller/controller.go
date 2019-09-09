@@ -13,7 +13,7 @@ type Controller struct {
 }
 
 func (controller Controller) GetArticleController(c *gin.Context) {
-	articles := controller.service.GetArticleService(c)
+	articles := controller.service.GetArticleService()
 	c.JSON(http.StatusOK, articles)
 }
 
