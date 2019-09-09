@@ -19,6 +19,15 @@ func NewService(dao dao.DaoInterface) *Service {
 	return &Service{dao: dao}
 }
 
+type ServiceInterface interface {
+	GetArticleService() []util.Article
+	GetSingleArticleService(c *gin.Context) util.Article
+	DeleteArticleService(c *gin.Context)
+	PostService(c *gin.Context) string
+	PostImageService(c *gin.Context) []util.ImageName
+	PostImageToDBService(c *gin.Context)
+}
+
 func (s Service) GetArticleService() []util.Article {
 	var articles []util.Article
 
