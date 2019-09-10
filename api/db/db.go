@@ -15,8 +15,6 @@ func NewDatabase(user, password, host string) *Database {
 		panic(err.Error())
 	}
 
-	defer db.Close()
-
 	err = db.Ping()
 	if err != nil {
 		panic(err.Error())
