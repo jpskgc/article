@@ -15,6 +15,15 @@ func NewController(service service.ServiceInterface) *Controller {
 	return &Controller{service: service}
 }
 
+type ControllerInterface interface {
+	GetArticleController(c *gin.Context)
+	GetSingleArticleController(c *gin.Context)
+	DeleteArticleController(c *gin.Context)
+	PostController(c *gin.Context)
+	PostImageController(c *gin.Context)
+	PostImageToDBController(c *gin.Context)
+}
+
 func (controller Controller) GetArticleController(c *gin.Context) {
 	articles := controller.service.GetArticleService()
 	c.JSON(http.StatusOK, articles)
