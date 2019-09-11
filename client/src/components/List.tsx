@@ -37,7 +37,6 @@ class List extends React.Component<
     };
     this.getArticle = this.getArticle.bind(this);
     this.pageChange = this.pageChange.bind(this);
-    this.setList = this.setList.bind(this);
     this.setActiveList = this.setActiveList.bind(this);
   }
 
@@ -59,11 +58,6 @@ class List extends React.Component<
     await this.setState({activePage: data.activePage as number});
     await this.setActiveList();
     this.setState({redirect: true});
-  }
-
-  async setList() {
-    await this.setState({activePage: Number(this.props.match.params.id)});
-    this.setActiveList();
   }
 
   async setActiveList() {
@@ -89,13 +83,8 @@ class List extends React.Component<
   async componentDidMount() {
     this.setState({articleFromApi: []});
     await this.getArticle();
-    await this.setState({
-      articleToDisplay: this.state.articleFromApi.slice(
-        this.state.begin,
-        this.state.end
-      ),
-    });
-    this.setList();
+    await this.setState({activePage: Number(this.props.match.params.id)});
+    this.setActiveList();
   }
 
   render() {
