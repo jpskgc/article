@@ -22,6 +22,7 @@
 - Web フレームワーク(フロントエンド): axios
 - バックエンド: Golang
 - Web フレームワーク(バックエンド): gin
+- 依存管理(Golang): Go Modules
 - データベース: mysql
 - Web サーバ: nginx
 - 自動デプロイ: docker/github/travis-ci/AWS Elastic Beanskalk
