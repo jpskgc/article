@@ -85,6 +85,29 @@ exports[`renders correctly 1`] = `
         Sign Up
       </a>
     </div>
+    <div
+      className="ui message"
+    >
+      <div
+        className="header"
+      >
+        Test User Login
+      </div>
+      <ul
+        className="list"
+      >
+        <li
+          className="content"
+        >
+          test@test.co.jp
+        </li>
+        <li
+          className="content"
+        >
+          test123
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 `;
