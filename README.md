@@ -26,4 +26,4 @@
 - データベース: mysql
 - Web サーバ: nginx
 - 画像アップロード: aws-sdk-go/Amazon S3
-- 自動デプロイ: docker/github/travis-ci/AWS Elastic Beanskalk
+- 自動ビルド・デプロイ: docker/github/travis-ci/AWS Elastic Beanskalk
