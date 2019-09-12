@@ -23,7 +23,8 @@
 - バックエンド: Golang
 - Web フレームワーク(バックエンド): gin
 - 依存管理(Golang): Go Modules
-- データベース: mysql/Amazon RDS
+- データベース(開発環境): mysql/Docker
+- データベース(本番環境): mysql/Amazon RDS
 - Web サーバ: nginx
 - 画像アップロード: aws-sdk-go/Amazon S3
 - 自動ビルド・デプロイ: docker/github/travis-ci/AWS Elastic Beanskalk
