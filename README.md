@@ -25,4 +25,5 @@
 - 依存管理(Golang): Go Modules
 - データベース: mysql
 - Web サーバ: nginx
+- 画像アップロード: aws-sdk-go/Amazon S3
 - 自動デプロイ: docker/github/travis-ci/AWS Elastic Beanskalk
