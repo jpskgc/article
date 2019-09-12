@@ -83,6 +83,13 @@ class LoginForm extends React.Component<{}, userState> {
           <Message>
             New to us? <a href="/signup">Sign Up</a>
           </Message>
+          <Message>
+            <Message.Header>Test User Login</Message.Header>
+            <Message.List>
+              <Message.Item>test@test.co.jp</Message.Item>
+              <Message.Item>test123</Message.Item>
+            </Message.List>
+          </Message>
         </Grid.Column>
       </Grid>
     );
