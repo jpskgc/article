@@ -97,7 +97,7 @@ class List extends React.Component<
                 <Grid.Column>
                   <Segment>
                     <Header as="h1">{articleData.title}</Header>
-                    <p style={{textOverflow: 'clip', wordBreak: 'break-all'}}>
+                    <p style={{wordBreak: 'break-all'}}>
                       {articleData.content.length > 100
                         ? articleData.content.substring(0, 97) + '...'
                         : articleData.content}
