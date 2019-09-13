@@ -6,21 +6,14 @@ import (
 	"article/api/handler"
 	"article/api/s3"
 	"article/api/service"
-	"log"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
-
-	"github.com/joho/godotenv"
 
 	"article/api/controller"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	db := db.NewDatabase(os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"))
 	s3 := s3.NewS3(os.Getenv("AWS_ACCESS_KEY_ID"), os.Getenv("AWS_SECRET_ACCESS_KEY"))
