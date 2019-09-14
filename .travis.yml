@@ -1,10 +1,6 @@
 language: generic
 sudo: required
 
-env:
-  - IMAGE_NAME="golang:staging"
-    GO_VERSION="1.12.6"
-
 services:
   - docker
 
@@ -13,10 +9,6 @@ before_install:
 
 script:
   - docker run -e CI=true jpskgc/react-test npm test
-  - curl -o structure-test -sSLO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64
-  - chmod +x structure-test
-  - docker build -t "go1-builder:${GO_VERSION}" --build-arg go_version="${GO_VERSION}" -q runtime-builder/
-  - ./structure-test test --image "go1-builder:${GO_VERSION}" --config runtime-builder/tests/structure/test_config.yaml
 
 after_success:
   - docker build -t jpskgc/multi-client ./client
