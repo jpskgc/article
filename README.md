@@ -28,4 +28,6 @@
 - Web サーバ: nginx
 - 認証ライブラリ: Firebase
 - 画像アップロード: aws-sdk-go/Amazon S3
+- ユニットテスト(フロントエンド): Jest
+- ユニットテスト(バックエンド): DATA-DOG/go-sqlmock, stretchr/testify
 - 自動ビルド・デプロイ: docker/github/travis-ci/AWS Elastic Beanskalk
